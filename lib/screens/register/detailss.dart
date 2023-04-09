@@ -42,12 +42,13 @@ class _DetaisState extends State<Detais> {
       child: Column(
         children: [
           //fields
-          AppTextFields(
-            hint: 'Full Name',
-            prefixIcon: const Icon(
-              Icons.person,
-              color: AppColors.primary,
-              size: 20,
+          TextFormField(
+            decoration: const InputDecoration(
+              prefixIcon: Icon(Icons.person),
+              hintText: 'E-mail',
+
+              border: OutlineInputBorder(
+              ),
             ),
             validator: (name) {
               return AppValidator.requiredField(name ?? '');

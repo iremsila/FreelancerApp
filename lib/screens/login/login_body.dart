@@ -7,6 +7,7 @@ import '../../shared/resources/colors.dart';
 import '../../shared/resources/fields.dart';
 import '../../shared/resources/styles.dart';
 import '../../utils/methods.dart';
+import '../forgot_password.dart';
 import '../register/signup.dart';
 
 class LoginBody extends StatefulWidget {
@@ -17,7 +18,12 @@ class LoginBody extends StatefulWidget {
 }
 
 class _LoginBodyState extends State<LoginBody> {
+
   GlobalKey<FormState> key = GlobalKey();
+
+
+
+
   bool isSignIn = false;
   @override
   Widget build(BuildContext context) {
@@ -42,9 +48,21 @@ class _LoginBodyState extends State<LoginBody> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
+                TextButton( child: Text(
                   'Forget Password?',
                   style: AppStyles.links(),
+                ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ForgotPasswordPage();
+                        },
+                      ),
+                    );
+                  },
+
                 )
               ],
             ),

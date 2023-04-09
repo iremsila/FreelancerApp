@@ -50,31 +50,6 @@ class AppLayOut extends StatelessWidget {
               fields ?? const SizedBox(),
               freev(v: 45),
               //bottom
-              Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      line(context),
-                      freeh(h: 10),
-                      Text(
-                        'Or',
-                        style: AppStyles.light(),
-                      ),
-                      freeh(h: 10),
-                      line(context),
-                    ],
-                  ),
-                  freev(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      box('images/Facebook_logo_(square).png'),
-                      box('images/Instagram-Icon.png')
-                    ],
-                  ),
-                ],
-              )
             ],
           ),
         ),
