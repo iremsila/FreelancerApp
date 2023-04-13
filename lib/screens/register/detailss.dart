@@ -20,6 +20,11 @@ class Detais extends StatefulWidget {
 }
 
 class _DetaisState extends State<Detais> {
+  late String _password;
+  double _strength = 0;
+  String _displayText = 'Please enter a password';
+  RegExp numReg = RegExp(r".*[0-9].*");
+  RegExp letterReg = RegExp(r".*[A-Za-z].*");
   bool check = false;
   bool showCustom = false;
   String countryCode = '+20';
@@ -28,6 +33,49 @@ class _DetaisState extends State<Detais> {
   String area = 'Area';
   bool showLink = false;
   bool showTermsValidate = false;
+
+
+  void _checkPassword(String value) {
+    _password = value.trim();
+    if (_password.isEmpty) {
+      setState(() {
+        _strength = 0;
+        _displayText = 'Please enter your password';
+      });
+    } else if (_password.length < 8) {
+      setState(() {
+        _strength = 1 / 4;
+        _displayText = 'Password is too short';
+      });
+    } else if (!_password.contains(RegExp(r'[A-Z]'))) {
+      setState(() {
+        _strength = 2 / 4;
+        _displayText = 'Password should contain uppercase letters';
+      });
+    } else if (!_password.contains(RegExp(r'[a-z]'))) {
+      setState(() {
+        _strength = 2 / 4;
+        _displayText = 'Password should contain lowercase letters';
+      });
+    } else if (!_password.contains(RegExp(r'[0-9]'))) {
+      setState(() {
+        _strength = 2 / 4;
+        _displayText = 'Password should contain numbers';
+      });
+    } else if (!_password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      setState(() {
+        _strength = 2 / 4;
+        _displayText = 'Password should contain special characters';
+      });
+    } else {
+      setState(() {
+        _strength = 1.0;
+        _displayText = 'Password is strong';
+      });
+    }
+  }
+
+
 
   String link = '';
   TextEditingController linkController = TextEditingController();
@@ -44,11 +92,13 @@ class _DetaisState extends State<Detais> {
           //fields
           TextFormField(
             decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.person),
-              hintText: 'E-mail',
-
+              hintText: 'Name and Surname',
               border: OutlineInputBorder(
-              ),
+              ),prefixIcon: const Icon(
+              Icons.person,
+              size: 20,
+              color: AppColors.primary,
+            ),
             ),
             validator: (name) {
               return AppValidator.requiredField(name ?? '');
@@ -58,36 +108,56 @@ class _DetaisState extends State<Detais> {
             },
           ),
           freev(),
-          AppTextFields(
-            hint: 'Email Address',
-            keyboardType: TextInputType.emailAddress,
+          TextFormField(
+            decoration: const InputDecoration(
+            hintText: 'Email Address',
+              border: OutlineInputBorder(
+              ),
             prefixIcon: const Icon(
               Icons.mail,
               size: 20,
               color: AppColors.primary,
-            ),
-            onChanged: (char) {
-              key.currentState!.validate();
-            },
+            ),),
             validator: (email) {
               return AppValidator.requiredField(email ?? '');
             },
           ),
           freev(),
-          AppPassFields(
-            prefixIcon: const Icon(
-              Icons.lock,
-              color: AppColors.primary,
-              size: 20,
-            ),
-            validator: (pass) {
-              return AppValidator.passFieldValidator(pass ?? '');
-            },
-            onChanged: (char) {
-              key.currentState!.validate();
-            },
+          TextField(
+            onChanged: (value) => _checkPassword(value),
+            obscureText: true,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(), hintText: 'Password',
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                borderSide: BorderSide(color: Colors.teal),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                borderSide: BorderSide(color: Colors.teal),
+              ),),
+          ),LinearProgressIndicator(
+            value: _strength,
+            backgroundColor: Colors.grey[300],
+            color: _strength <= 1 / 4
+                ? Colors.red
+                : _strength == 2 / 4
+                ? Colors.yellow
+                : _strength == 3 / 4
+                ? Colors.blue
+                : Colors.green,
+            minHeight: 15,
+          ),Text(
+            _displayText,
+            style: const TextStyle(fontSize: 18),
           ),
-          freev(),
+          const SizedBox(
+            height: 50,
+          ),
+          ElevatedButton(
+              onPressed: () {},
+              child: const Text('Continue')),
+    freev(),
           //custom fields
           prov.current == 0
               ? ExpandedSection(

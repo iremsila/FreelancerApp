@@ -71,11 +71,13 @@ UnderlineInputBorder underlineInputBorder({Color color = Colors.grey}) {
 class AppPassFields extends StatefulWidget {
   const AppPassFields(
       {super.key,
+        this.InputBorder ,
         this.filled,
         this.prefixIcon,
         this.fillColor,
         this.onChanged,
         this.validator});
+  final Widget? InputBorder ;
   final bool? filled;
   final Color? fillColor;
   final String? Function(String?)? validator;

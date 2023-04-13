@@ -32,14 +32,27 @@ class _LoginBodyState extends State<LoginBody> {
       child: SizedBox(
         child: Column(
           children: [
-            AppTextFields(
-              hint: 'UserName',
+            TextFormField(
+              decoration: const InputDecoration(
+              hintText: 'UserName',
+              border: OutlineInputBorder(
+              ),
+              prefixIcon: const Icon(
+                Icons.person,
+                size: 20,
+                color: AppColors.primary,
+              ),),
               validator: (name) {
                 return AppValidator.requiredField(name ?? '');
               },
             ),
             freev(),
             AppPassFields(
+              prefixIcon: const Icon(
+                Icons.add,
+                size: 20,
+                color: AppColors.primary,
+              ),
               validator: (pass) {
                 return AppValidator.passFieldValidator(pass ?? '');
               },

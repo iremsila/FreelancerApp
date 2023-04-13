@@ -8,6 +8,7 @@ class AppValidator {
   }
 
   static String? passFieldValidator(String val) {
+
     if (val.isEmpty) {
       return 'this field is required';
     }

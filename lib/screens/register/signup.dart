@@ -22,8 +22,7 @@ class SignUp extends StatelessWidget {
             size: 20,
           )),
       header: 'SignUp',
-      dis:
-      'Hi',
+      dis:'',
       fields: const SignUpBody(),
     );
   }
