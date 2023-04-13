@@ -1,3 +1,4 @@
+import 'package:FreelancerApp/screens/Jobs/jobs_screen.dart';
 import 'package:flutter/material.dart';
 import '../shared/items/widgets.dart';
 import '../shared/resources/styles.dart';
@@ -5,17 +6,30 @@ import '../shared/resources/styles.dart';
 class AppLayOut extends StatelessWidget {
   const AppLayOut(
       {super.key,
-        this.leading,
-        required this.header,
-        required this.dis,
-        this.fields});
+      this.leading,
+      required this.header,
+      required this.dis,
+      this.fields});
+
   final Widget? leading, fields;
   final String header, dis;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: leading,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.home),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => JobScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
