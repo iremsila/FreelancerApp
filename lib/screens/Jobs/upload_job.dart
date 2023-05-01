@@ -17,13 +17,13 @@ class _UploadJobNow extends State<UploadJobNow> {
 
   // MySQL bağlantı ayarları
   final settings = mysql.ConnectionSettings(
-    host: '213.238.183.81',
+    host: 'ip',
     port: 3306,
-    user: 'httpdegm_melike',
-    password: 'A}c74e&QAI[x',
+    user: 'user_name',
+    password: 'user_password',
     db: 'httpdegm_database1',
   );
-
+//ARKADAŞLAR BURADAKİ BİLGİLER BANA AİT OLDUĞU İÇİN GİTHUB UYARI VERDİ HOST, USER VE PASSWORD KISMINI KENDİNİZE GÖRE DOLDURMANIZ LAZIM.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
