@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   void initState() {
     _animatedController =
-        AnimationController(vsync: this, duration: Duration(seconds: 50));
+        AnimationController(vsync: this, duration: Duration(seconds: 15));
     _animation =
         CurvedAnimation(parent: _animatedController, curve: Curves.linear)
           ..addListener(() {
