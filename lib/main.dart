@@ -1,4 +1,5 @@
-import 'package:FreelancerApp/screens/login/login_body.dart';
+import 'package:FreelancerApp/screens/SplashScreen/splash_screen.dart';
+import 'package:FreelancerApp/screens/login/login.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -12,9 +13,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-        return  MaterialApp(
-          title: 'Flutter Demo',
-          home: LoginPage(showRegisterPage: () {  },),
-        );
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      home: SplashScreen(),
+    );
   }
 }

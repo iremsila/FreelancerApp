@@ -1,10 +1,9 @@
-import 'package:FreelancerApp/screens/login/login_body.dart';
+import 'package:FreelancerApp/screens/login/login.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class RegisterPage extends StatefulWidget {
-
   const RegisterPage({Key? key}) : super(key: key);
 
   @override
@@ -73,9 +72,7 @@ class _RegisterPageState extends State<RegisterPage>
     }
   }
 
-  Future signUp() async {
-
-  }
+  Future signUp() async {}
 
   bool passwordConfirmed() {
     if (_passwordController.text.trim() ==
@@ -104,16 +101,16 @@ class _RegisterPageState extends State<RegisterPage>
     _animatedController =
         AnimationController(vsync: this, duration: Duration(seconds: 50));
     _animation =
-    CurvedAnimation(parent: _animatedController, curve: Curves.linear)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((animationStatus) {
-        if (animationStatus == AnimationStatus.completed) {
-          _animatedController.reset();
-          _animatedController.forward();
-        }
-      });
+        CurvedAnimation(parent: _animatedController, curve: Curves.linear)
+          ..addListener(() {
+            setState(() {});
+          })
+          ..addStatusListener((animationStatus) {
+            if (animationStatus == AnimationStatus.completed) {
+              _animatedController.reset();
+              _animatedController.forward();
+            }
+          });
     _animatedController.forward();
     super.initState();
   }
@@ -125,7 +122,8 @@ class _RegisterPageState extends State<RegisterPage>
       body: Stack(
         children: [
           CachedNetworkImage(
-            imageUrl: "https://i.pinimg.com/564x/81/db/9f/81db9f703de0ec7e79919174623f3d9e.jpg",
+            imageUrl:
+                "https://i.pinimg.com/564x/81/db/9f/81db9f703de0ec7e79919174623f3d9e.jpg",
             errorWidget: (context, url, error) => Icon(Icons.error),
             height: double.infinity,
             width: double.infinity,
@@ -314,10 +312,10 @@ class _RegisterPageState extends State<RegisterPage>
                         color: _strength <= 1 / 4
                             ? Colors.red
                             : _strength == 2 / 4
-                            ? Colors.yellow
-                            : _strength == 3 / 4
-                            ? Colors.blue
-                            : Colors.green,
+                                ? Colors.yellow
+                                : _strength == 3 / 4
+                                    ? Colors.blue
+                                    : Colors.green,
                         minHeight: 15,
                       ),
                     ),
@@ -356,25 +354,27 @@ class _RegisterPageState extends State<RegisterPage>
                     SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [ Text(
-                        "You have already an",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blueGrey),
-                      ),
+                      children: [
+                        Text(
+                          "You have already an",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blueGrey),
+                        ),
                         TextButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) {
-                                    return LoginPage(showRegisterPage: () {  },);
+                                    return LoginPage(
+                                      showRegisterPage: () {},
+                                    );
                                   },
                                 ),
                               );
                             },
-                            child: Text("account? ")
-                        ),
+                            child: Text("account? ")),
                       ],
                     ),
                     SizedBox(

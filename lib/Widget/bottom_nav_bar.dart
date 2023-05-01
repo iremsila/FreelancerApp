@@ -44,7 +44,7 @@ class BottomNavigationBarForApp extends StatelessWidget {
               context, MaterialPageRoute(builder: (_) => const JobScreen()));
         } else if (index == 1) {
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => const UploadJobNow()));
+              context, MaterialPageRoute(builder: (_) => UploadJobNow()));
         } else if (index == 2) {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (_) => const ProfileScreen()));

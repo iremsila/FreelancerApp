@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../forgot_password.dart';
-import '../register/registerpage.dart';
-
+import '../register/register.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/login-page';
@@ -35,24 +34,25 @@ class _LoginPageState extends State<LoginPage>
     _animatedController =
         AnimationController(vsync: this, duration: Duration(seconds: 50));
     _animation =
-    CurvedAnimation(parent: _animatedController, curve: Curves.linear)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((animationStatus) {
-        if (animationStatus == AnimationStatus.completed) {
-          _animatedController.reset();
-          _animatedController.forward();
-        }
-      });
+        CurvedAnimation(parent: _animatedController, curve: Curves.linear)
+          ..addListener(() {
+            setState(() {});
+          })
+          ..addStatusListener((animationStatus) {
+            if (animationStatus == AnimationStatus.completed) {
+              _animatedController.reset();
+              _animatedController.forward();
+            }
+          });
     _animatedController.forward();
     super.initState();
   }
 
   Future signIn() async {
-      email: _emailController.text.trim();
-      password: _passwordController.text.trim();
-
+    email:
+    _emailController.text.trim();
+    password:
+    _passwordController.text.trim();
   }
 
   @override
@@ -69,7 +69,8 @@ class _LoginPageState extends State<LoginPage>
       body: Stack(
         children: [
           CachedNetworkImage(
-            imageUrl: "https://i.pinimg.com/564x/81/db/9f/81db9f703de0ec7e79919174623f3d9e.jpg",
+            imageUrl:
+                "https://i.pinimg.com/564x/81/db/9f/81db9f703de0ec7e79919174623f3d9e.jpg",
             errorWidget: (context, url, error) => Icon(Icons.error),
             height: double.infinity,
             width: double.infinity,
@@ -231,20 +232,18 @@ class _LoginPageState extends State<LoginPage>
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blueGrey),
                           ),
-                       TextButton(
+                          TextButton(
                               onPressed: () {
-                               Navigator.push(
-                                    context,
-                           MaterialPageRoute(
-                            builder: (context) {
-                              return RegisterPage();
-                            },
-                          ),
-                        );
-                      },
-                              child: Text(
-                              "Register now")
-                            ),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return RegisterPage();
+                                    },
+                                  ),
+                                );
+                              },
+                              child: Text("Register now")),
                         ],
                       ),
                       SizedBox(
@@ -261,4 +260,3 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 }
-
