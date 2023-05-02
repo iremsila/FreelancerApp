@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../Widget/bottom_nav_bar.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
 
 class UploadJobNow extends StatefulWidget {
@@ -23,14 +22,11 @@ class _UploadJobNow extends State<UploadJobNow> {
     password: 'user_password',
     db: 'httpdegm_database1',
   );
+
 //ARKADAŞLAR BURADAKİ BİLGİLER BANA AİT OLDUĞU İÇİN GİTHUB UYARI VERDİ HOST, USER VE PASSWORD KISMINI KENDİNİZE GÖRE DOLDURMANIZ LAZIM.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBarForApp(indexNum: 1),
-      appBar: AppBar(
-        title: Text('Post a Job'),
-      ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
@@ -39,6 +35,14 @@ class _UploadJobNow extends State<UploadJobNow> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  "Post a Job",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16.0),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Job Title',
