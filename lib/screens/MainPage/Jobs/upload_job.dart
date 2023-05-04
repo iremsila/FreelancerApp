@@ -182,7 +182,7 @@ class _UploadJobNow extends State<UploadJobNow> {
 
                       // MySQL bağlantısı
                       final conn =
-                          await mysql.MySqlConnection.connect(settings);
+                      await mysql.MySqlConnection.connect(settings);
 
                       // Kayıt ekleme
                       await conn.query(
