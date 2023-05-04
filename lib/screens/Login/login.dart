@@ -77,7 +77,10 @@ class _LoginPageState extends State<LoginPage>
                 MaterialPageRoute(builder: (context) => const MainPage()),
               );
             },
-            child: Text('Skip',style: TextStyle(color: Colors.white),),
+            child: Text(
+              'Skip',
+              style: TextStyle(color: Colors.white),
+            ),
           )
         ],
         backgroundColor: Colors.transparent,
@@ -99,7 +102,7 @@ class _LoginPageState extends State<LoginPage>
               child: Container(
                 margin: EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.white70,
                   borderRadius: BorderRadius.circular(35),
                 ),
                 child: Center(
@@ -112,7 +115,7 @@ class _LoginPageState extends State<LoginPage>
                         style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.redAccent[700]),
+                            color: Colors.blue.shade900),
                       ),
                       SizedBox(height: 20),
                       Padding(
@@ -120,7 +123,7 @@ class _LoginPageState extends State<LoginPage>
                         child: TextFormField(
                           keyboardType: TextInputType.emailAddress,
                           controller: _emailController,
-                          style: TextStyle(color: Colors.redAccent[700]),
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                             prefixIcon: Icon(
                               Icons.email_outlined,
@@ -130,7 +133,7 @@ class _LoginPageState extends State<LoginPage>
                             filled: true,
                             fillColor: Colors.white,
                             hintText: "Email",
-                            hintStyle: TextStyle(color: Colors.redAccent[700]),
+                            hintStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.black87),
                             ),
@@ -167,7 +170,7 @@ class _LoginPageState extends State<LoginPage>
                             filled: true,
                             fillColor: Colors.white,
                             hintText: "Password",
-                            hintStyle: TextStyle(color: Colors.redAccent[700]),
+                            hintStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.white),
                             ),
@@ -207,8 +210,9 @@ class _LoginPageState extends State<LoginPage>
                               Text(
                                 "Forgot Password? ",
                                 style: TextStyle(
-                                  color: Colors.redAccent[700],
+                                  color: Colors.blue.shade900,
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 15,
                                 ),
                               ),
                             ],
@@ -225,11 +229,11 @@ class _LoginPageState extends State<LoginPage>
                           child: Container(
                             padding: EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.redAccent[700],
+                              color: Colors.blue.shade800,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              'Sign in',
+                              'Sign In',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 24,
@@ -246,6 +250,7 @@ class _LoginPageState extends State<LoginPage>
                           Text(
                             "Not a member? ",
                             style: TextStyle(
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blueGrey),
                           ),
@@ -260,7 +265,11 @@ class _LoginPageState extends State<LoginPage>
                                   ),
                                 );
                               },
-                              child: Text("Register now")),
+                              child: Text(
+                                "Register now",
+                                style: TextStyle(
+                                    fontSize: 15, color: Colors.blue.shade900),
+                              )),
                         ],
                       ),
                       SizedBox(

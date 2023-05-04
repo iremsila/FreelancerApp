@@ -119,7 +119,7 @@ class _RegisterPageState extends State<RegisterPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white70,
       body: Stack(
         children: [
           CachedNetworkImage(
@@ -136,7 +136,7 @@ class _RegisterPageState extends State<RegisterPage>
               child: Container(
                 margin: EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.white70,
                     borderRadius: BorderRadius.circular(20)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -147,7 +147,7 @@ class _RegisterPageState extends State<RegisterPage>
                       style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.redAccent[700]),
+                          color: Colors.blue.shade900),
                     ),
                     SizedBox(height: 20),
                     Padding(
@@ -160,7 +160,7 @@ class _RegisterPageState extends State<RegisterPage>
                           filled: true,
                           fillColor: Colors.white,
                           hintText: "Name and Surname",
-                          hintStyle: TextStyle(color: Colors.redAccent[700]),
+                          hintStyle: TextStyle(color: Colors.black),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.black87),
                           ),
@@ -185,7 +185,7 @@ class _RegisterPageState extends State<RegisterPage>
                           filled: true,
                           fillColor: Colors.white,
                           hintText: "Age",
-                          hintStyle: TextStyle(color: Colors.redAccent[700]),
+                          hintStyle: TextStyle(color: Colors.black),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.black87),
                           ),
@@ -210,7 +210,7 @@ class _RegisterPageState extends State<RegisterPage>
                           filled: true,
                           fillColor: Colors.white,
                           hintText: "Email",
-                          hintStyle: TextStyle(color: Colors.redAccent[700]),
+                          hintStyle: TextStyle(color: Colors.black),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.black87),
                           ),
@@ -243,7 +243,7 @@ class _RegisterPageState extends State<RegisterPage>
                           filled: true,
                           fillColor: Colors.white,
                           hintText: "Password",
-                          hintStyle: TextStyle(color: Colors.redAccent[700]),
+                          hintStyle: TextStyle(color: Colors.black),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.black87),
                           ),
@@ -284,7 +284,7 @@ class _RegisterPageState extends State<RegisterPage>
                           filled: true,
                           fillColor: Colors.white,
                           hintText: "Confirmed Password",
-                          hintStyle: TextStyle(color: Colors.redAccent[700]),
+                          hintStyle: TextStyle(color: Colors.black),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.black87),
                           ),
@@ -333,7 +333,10 @@ class _RegisterPageState extends State<RegisterPage>
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Text("Employer or Freelancer ?",
+                      child: Text(
+                        "Employer or Freelancer ?",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ),
                     SizedBox(height: 10),
@@ -346,7 +349,8 @@ class _RegisterPageState extends State<RegisterPage>
                             dropdownValue = newValue!;
                           });
                         },
-                        style: const TextStyle(color: Colors.red),
+                        style: TextStyle(
+                            color: Colors.blue.shade900, fontSize: 18),
                         items: <String>['Choose!', 'Employer', 'Freelancer']
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
@@ -364,11 +368,11 @@ class _RegisterPageState extends State<RegisterPage>
                         child: Container(
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.redAccent[700],
+                            color: Colors.blue.shade900,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            'Sign up',
+                            'Sign Up',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 24,
@@ -385,6 +389,7 @@ class _RegisterPageState extends State<RegisterPage>
                         Text(
                           "You have already an",
                           style: TextStyle(
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey),
                         ),
@@ -401,7 +406,13 @@ class _RegisterPageState extends State<RegisterPage>
                                 ),
                               );
                             },
-                            child: Text("account? ")),
+                            child: Text(
+                              "account? ",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue.shade900),
+                            )),
                       ],
                     ),
                     SizedBox(
