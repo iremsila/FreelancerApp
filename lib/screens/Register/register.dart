@@ -104,7 +104,7 @@ class _RegisterPageState extends State<RegisterPage>
     // Başarılı bildirimi
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Job posted successfully'),
+        content: Text('You have successfully registered!'),
       ),
     );
   }
