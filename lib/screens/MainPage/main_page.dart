@@ -46,7 +46,7 @@ class _MainPageState extends State<MainPage> {
             extendBody: true,
             backgroundColor: Colors.white,
             appBar: AppBar(
-              backgroundColor: Colors.blue.shade200,
+              backgroundColor: Colors.blue.shade900,
               title: const Text('WorkWise',
                   style: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.bold)),
@@ -55,9 +55,9 @@ class _MainPageState extends State<MainPage> {
             ),
             body: screens[index],
             bottomNavigationBar: CurvedNavigationBar(
-              color: Colors.blue.shade200,
+              color: Colors.blue.shade900,
               backgroundColor: Colors.transparent,
-              buttonBackgroundColor: Colors.purple.shade200,
+              buttonBackgroundColor: Colors.blue.shade400,
               animationCurve: Curves.easeInOut,
               animationDuration: const Duration(milliseconds: 300),
               height: 60,

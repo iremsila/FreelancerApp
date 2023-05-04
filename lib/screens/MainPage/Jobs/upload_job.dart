@@ -50,6 +50,13 @@ class _UploadJobNow extends State<UploadJobNow> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                SizedBox(height: 10.0),
+                Text(
+                  "You must fill in all fields correctly.",
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
                 SizedBox(height: 16.0),
                 TextFormField(
                   decoration: InputDecoration(
@@ -152,29 +159,7 @@ class _UploadJobNow extends State<UploadJobNow> {
                     _selectedDate = DateFormat('dd-MM-yyyy').parseUTC(value!);
                   },
                 ),
-                // ElevatedButton(
-                //   onPressed: () async {
-                //     final DateTime? selectedDate = await _selectedDate;
-                //     if (selectedDate != null) {
-                //       setState(() {
-                //         _selectedDate = selectedDate;
-                //       });
-                //     }
-                //   },
-                //   child: Text(
-                //       'Select Date: ${DateFormat.yMd().format(_selectedDate)}'),
-                // ),
                 SizedBox(height: 10.0),
-                //SizedBox(height: 16.0),
-                // ElevatedButton(
-                //   onPressed: () async {
-                //     final DateTime? picked = await _selectDate(context);
-                //     if (picked != null) {
-                //       // Seçilen tarihi kullan
-                //     }
-                //   },
-                //   child: Text('Select Date'),
-                // ),
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
