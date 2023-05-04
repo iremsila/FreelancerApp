@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
 
 class UploadJobNow extends StatefulWidget {
@@ -10,18 +11,25 @@ class _UploadJobNow extends State<UploadJobNow> {
   final _formKey = GlobalKey<FormState>();
 
   late String _jobTitle;
-  late String _companyName;
+  late String _category;
   late String _location;
   late String _description;
+  late DateTime _selectedDate;
+  late String _budget;
 
   // MySQL bağlantı ayarları
+
   final settings = mysql.ConnectionSettings(
-    host: 'ip',
+    host: '213.238.183.81',
     port: 3306,
-    user: 'user_name',
-    password: 'user_password',
+    user: 'httpdegm_melike',
+    password: 'A}c74e&QAI[x',
     db: 'httpdegm_database1',
   );
+  void initState() {
+    super.initState();
+    _selectedDate = DateTime.now();
+  }
 
 //ARKADAŞLAR BURADAKİ BİLGİLER BANA AİT OLDUĞU İÇİN GİTHUB UYARI VERDİ HOST, USER VE PASSWORD KISMINI KENDİNİZE GÖRE DOLDURMANIZ LAZIM.
   @override
@@ -61,17 +69,17 @@ class _UploadJobNow extends State<UploadJobNow> {
                 SizedBox(height: 16.0),
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Company Name',
+                    labelText: 'Category',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter company name';
+                      return 'Please enter a category';
                     }
                     return null;
                   },
                   onSaved: (value) {
-                    _companyName = value!;
+                    _category = value!;
                   },
                 ),
                 SizedBox(height: 16.0),
@@ -108,6 +116,55 @@ class _UploadJobNow extends State<UploadJobNow> {
                     _description = value!;
                   },
                 ),
+                SizedBox(
+                  height: 16,
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Budget',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter budget';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _budget = value!;
+                  },
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Date in format dd-mm-yy',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter date';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _selectedDate = DateFormat('dd-MM-yyyy').parseUTC(value!);
+                  },
+                ),
+                // ElevatedButton(
+                //   onPressed: () async {
+                //     final DateTime? selectedDate = await _selectedDate;
+                //     if (selectedDate != null) {
+                //       setState(() {
+                //         _selectedDate = selectedDate;
+                //       });
+                //     }
+                //   },
+                //   child: Text(
+                //       'Select Date: ${DateFormat.yMd().format(_selectedDate)}'),
+                // ),
+                SizedBox(height: 10.0),
                 //SizedBox(height: 16.0),
                 // ElevatedButton(
                 //   onPressed: () async {
@@ -118,7 +175,6 @@ class _UploadJobNow extends State<UploadJobNow> {
                 //   },
                 //   child: Text('Select Date'),
                 // ),
-                SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
@@ -130,8 +186,15 @@ class _UploadJobNow extends State<UploadJobNow> {
 
                       // Kayıt ekleme
                       await conn.query(
-                          '''INSERT INTO jobs (job_title, company_name, location, description) VALUES (?, ?, ?, ?)''',
-                          [_jobTitle, _companyName, _location, _description]);
+                          '''INSERT INTO upload_job (job_title, category, location, description, budget, date_posted) VALUES (?, ?, ?, ?, ?, ?)''',
+                          [
+                            _jobTitle,
+                            _category,
+                            _location,
+                            _description,
+                            _budget,
+                            _selectedDate
+                          ]);
                       await conn.close();
 
                       // Başarılı bildirimi

@@ -2,6 +2,7 @@ import 'package:FreelancerApp/screens/login/login.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mysql1/mysql1.dart' as mysql;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -10,14 +11,17 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
+//MySQL
+
 class _RegisterPageState extends State<RegisterPage>
     with SingleTickerProviderStateMixin {
-  String? dropdownValue = "Choose!";
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmpasswordController = TextEditingController();
-  final _NameController = TextEditingController();
-  final _ageController = TextEditingController();
+  String? _selectedOption = "Choose!";
+  late TextEditingController _emailController = TextEditingController();
+  late TextEditingController _passwordController = TextEditingController();
+  late TextEditingController _confirmpasswordController =
+      TextEditingController();
+  late TextEditingController _nameController = TextEditingController();
+  late TextEditingController _ageController = TextEditingController();
   late AnimationController _animatedController;
   late Animation<double> _animation;
 
@@ -73,7 +77,36 @@ class _RegisterPageState extends State<RegisterPage>
     }
   }
 
-  Future signUp() async {}
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final settings = mysql.ConnectionSettings(
+    host: '213.238.183.81',
+    port: 3306,
+    user: 'httpdegm_melike',
+    password: 'A}c74e&QAI[x',
+    db: 'httpdegm_database1',
+  );
+  Future<void> register() async {
+    // MySQL bağlantısı
+    final connect = await mysql.MySqlConnection.connect(settings);
+
+    // Kayıt ekleme
+    await connect.query(
+        '''INSERT INTO User (nameandsurname, age, email, password) VALUES (?, ?, ?, ?)''',
+        [
+          _nameController.text,
+          int.tryParse(_ageController.text),
+          _emailController.text,
+          _passwordController.text,
+        ]);
+    await connect.close();
+
+    // Başarılı bildirimi
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Job posted successfully'),
+      ),
+    );
+  }
 
   bool passwordConfirmed() {
     if (_passwordController.text.trim() ==
@@ -91,7 +124,7 @@ class _RegisterPageState extends State<RegisterPage>
     _emailController.dispose();
     _passwordController.dispose();
     _confirmpasswordController.dispose();
-    _NameController.dispose();
+    _nameController.dispose();
     _ageController.dispose();
     _animatedController.dispose();
     super.dispose();
@@ -153,7 +186,7 @@ class _RegisterPageState extends State<RegisterPage>
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
                       child: TextFormField(
-                        controller: _NameController,
+                        controller: _nameController,
                         style: TextStyle(color: Colors.black87),
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -343,10 +376,10 @@ class _RegisterPageState extends State<RegisterPage>
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
                       child: DropdownButton<String>(
-                        value: dropdownValue,
+                        value: _selectedOption,
                         onChanged: (String? newValue) {
                           setState(() {
-                            dropdownValue = newValue!;
+                            _selectedOption = newValue!;
                           });
                         },
                         style: TextStyle(
@@ -364,7 +397,9 @@ class _RegisterPageState extends State<RegisterPage>
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 25),
                       child: GestureDetector(
-                        onTap: signUp,
+                        onTap: () {
+                          register();
+                        },
                         child: Container(
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
