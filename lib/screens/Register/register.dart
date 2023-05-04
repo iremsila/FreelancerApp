@@ -91,12 +91,13 @@ class _RegisterPageState extends State<RegisterPage>
 
     // Kayıt ekleme
     await connect.query(
-        '''INSERT INTO User (nameandsurname, age, email, password) VALUES (?, ?, ?, ?)''',
+        '''INSERT INTO User (nameandsurname, age, email, password, freelanceroremployer) VALUES (?, ?, ?, ?,?)''',
         [
           _nameController.text,
           int.tryParse(_ageController.text),
           _emailController.text,
           _passwordController.text,
+          _selectedOption
         ]);
     await connect.close();
 
