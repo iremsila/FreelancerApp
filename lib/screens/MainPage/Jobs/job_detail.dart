@@ -115,7 +115,7 @@ class JobDetailPage extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      jobData['company_name'],
+                      jobData['category'],
                       style: GoogleFonts.openSans(fontSize: 15,fontWeight: FontWeight.bold),
                     ),
                     Spacer(),

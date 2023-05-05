@@ -28,7 +28,7 @@ class _JobScreenState extends State<JobScreen>
 
   Future<List<Map<String, dynamic>>> fetchData() async {
     var conn = await getConnection();
-    var results = await conn.query('SELECT * FROM jobs');
+    var results = await conn.query('SELECT * FROM upload_job');
     await conn.close();
     return results.map((resultRow) {
       return Map<String, dynamic>.from(resultRow.fields);
