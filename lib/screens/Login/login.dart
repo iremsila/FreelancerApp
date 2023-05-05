@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
 import '../forgot_password.dart';
 import '../register/register.dart';
-import 'package:FreelancerApp/screens/MainPage/Category/category1_page.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/login-page';
@@ -99,24 +98,6 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MainPage()),
-              );
-            },
-            child: Text(
-              'Skip',
-              style: TextStyle(color: Colors.white),
-            ),
-          )
-        ],
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: Stack(
         children: [
           CachedNetworkImage(
