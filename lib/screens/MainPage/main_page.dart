@@ -1,9 +1,10 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'Jobs/jobs_screen.dart';
-import 'Jobs/upload_job.dart';
 import 'Profile/profile_screen.dart';
+import 'Search/search_job.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class _MainPageState extends State<MainPage> {
 
   final screens = [
     const JobScreen(),
-    UploadJobNow(),
+    SearchScreen(),
     const ProfileScreen(),
   ];
 
@@ -29,7 +30,7 @@ class _MainPageState extends State<MainPage> {
         size: 30,
       ),
       const Icon(
-        Icons.add,
+        Icons.search,
         size: 30,
       ),
       const Icon(
@@ -37,27 +38,41 @@ class _MainPageState extends State<MainPage> {
         size: 30,
       ),
     ];
-    return Container(
-      color: Colors.blue.shade200,
-      child: SafeArea(
-        top: false,
-        child: ClipRect(
-          child: Scaffold(
-            extendBody: true,
-            backgroundColor: Colors.white,
-            appBar: AppBar(
-              backgroundColor: Colors.blue.shade900,
-              title: const Text('WorkWise',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold)),
-              elevation: 0,
-              centerTitle: true,
+    return SafeArea(
+      top: false,
+      child: ClipRect(
+        child: Scaffold(
+          backgroundColor: Colors.grey.shade50,
+          extendBody: true,
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(40),
+            child: AppBar(
+              systemOverlayStyle: const SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent),
+              backgroundColor: Colors.white,
+              title: const Padding(
+                padding: EdgeInsets.only(bottom: 0, top: 0, left: 0, right: 0),
+                child: Text('WorkWise',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
+              ),
+              elevation: 2,
             ),
-            body: screens[index],
-            bottomNavigationBar: CurvedNavigationBar(
-              color: Colors.blue.shade900,
+          ),
+          body: screens[index],
+          bottomNavigationBar: Container(
+            decoration: const BoxDecoration(
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 15,
+                    offset: Offset(0.0, 0.75))
+              ],
+            ),
+            child: CurvedNavigationBar(
+              color: Colors.white,
               backgroundColor: Colors.transparent,
-              buttonBackgroundColor: Colors.blue.shade400,
+              buttonBackgroundColor: Colors.cyan,
               animationCurve: Curves.easeInOut,
               animationDuration: const Duration(milliseconds: 300),
               height: 60,

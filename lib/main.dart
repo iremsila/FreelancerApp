@@ -1,5 +1,4 @@
 import 'package:FreelancerApp/screens/SplashScreen/splash_screen.dart';
-import 'package:FreelancerApp/screens/login/login.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -17,6 +16,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       home: SplashScreen(),
+      theme:
+          ThemeData(brightness: Brightness.light, primarySwatch: Colors.cyan),
     );
   }
 }

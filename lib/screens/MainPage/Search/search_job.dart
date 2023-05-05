@@ -12,10 +12,8 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Search Job Screen'),
-          centerTitle: true,
-          backgroundColor: Colors.lightGreen,
+        body: Center(
+          child: Text('Profile'),
         ),
       ),
     );
