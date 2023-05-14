@@ -30,7 +30,6 @@ class _LoginPageState extends State<LoginPage>
     });
   }
 
-
   final settings = mysql.ConnectionSettings(
     host: '213.238.183.81',
     port: 3306,
@@ -38,7 +37,6 @@ class _LoginPageState extends State<LoginPage>
     password: 'A}c74e&QAI[x',
     db: 'httpdegm_database1',
   );
-
 
   Future<bool> login() async {
     final connect = await mysql.MySqlConnection.connect(settings);
@@ -59,22 +57,21 @@ class _LoginPageState extends State<LoginPage>
     }
   }
 
-
   @override
   void initState() {
     _animatedController =
         AnimationController(vsync: this, duration: Duration(seconds: 15));
     _animation =
-    CurvedAnimation(parent: _animatedController, curve: Curves.linear)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((animationStatus) {
-        if (animationStatus == AnimationStatus.completed) {
-          _animatedController.reset();
-          _animatedController.forward();
-        }
-      });
+        CurvedAnimation(parent: _animatedController, curve: Curves.linear)
+          ..addListener(() {
+            setState(() {});
+          })
+          ..addStatusListener((animationStatus) {
+            if (animationStatus == AnimationStatus.completed) {
+              _animatedController.reset();
+              _animatedController.forward();
+            }
+          });
     _animatedController.forward();
     super.initState();
   }
@@ -102,7 +99,7 @@ class _LoginPageState extends State<LoginPage>
         children: [
           CachedNetworkImage(
             imageUrl:
-            "https://i.pinimg.com/564x/81/db/9f/81db9f703de0ec7e79919174623f3d9e.jpg",
+                "https://i.pinimg.com/564x/81/db/9f/81db9f703de0ec7e79919174623f3d9e.jpg",
             errorWidget: (context, url, error) => Icon(Icons.error),
             height: double.infinity,
             width: double.infinity,

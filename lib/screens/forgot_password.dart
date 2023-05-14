@@ -10,15 +10,11 @@ class ForgotPasswordPage extends StatefulWidget {
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _emailController = TextEditingController();
 
-
-
   @override
   void dispose() {
     _emailController.dispose();
     super.dispose();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +58,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             height: 10,
           ),
           TextButton(
-            onPressed: (){},
+            onPressed: () {},
             child: Text("Password Reset"),
           ),
         ],

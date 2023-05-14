@@ -92,15 +92,16 @@ class JobDetailPage extends StatelessWidget {
                 ),
                 Text(
                   jobData['job_title'],
-                  style: GoogleFonts.openSans(fontSize: 18,fontWeight: FontWeight.bold),
-
+                  style: GoogleFonts.openSans(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 Text(
                   jobData['location'],
-                  style: GoogleFonts.openSans(fontSize: 15,color: SecondaryText),
+                  style:
+                      GoogleFonts.openSans(fontSize: 15, color: SecondaryText),
                 ),
                 const SizedBox(
                   height: 15,
@@ -116,12 +117,14 @@ class JobDetailPage extends StatelessWidget {
                     ),
                     Text(
                       jobData['category'],
-                      style: GoogleFonts.openSans(fontSize: 15,fontWeight: FontWeight.bold),
+                      style: GoogleFonts.openSans(
+                          fontSize: 15, fontWeight: FontWeight.bold),
                     ),
                     Spacer(),
                     Text(
                       "273 applicants",
-                      style: GoogleFonts.openSans(fontSize: 15,fontWeight: FontWeight.bold),
+                      style: GoogleFonts.openSans(
+                          fontSize: 15, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -135,7 +138,8 @@ class JobDetailPage extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   child: Text(
                     "Job Description",
-                    style: GoogleFonts.openSans(fontSize: 25,fontWeight: FontWeight.bold),
+                    style: GoogleFonts.openSans(
+                        fontSize: 25, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(
@@ -145,7 +149,8 @@ class JobDetailPage extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   child: Text(
                     jobData['description'],
-                    style: GoogleFonts.openSans(fontSize: 15,color: SecondaryText),
+                    style: GoogleFonts.openSans(
+                        fontSize: 15, color: SecondaryText),
                   ),
                 ),
                 const Padding(
@@ -158,7 +163,8 @@ class JobDetailPage extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   child: Text(
                     "Job Requirements",
-                    style: GoogleFonts.openSans(fontSize: 25,fontWeight: FontWeight.bold),
+                    style: GoogleFonts.openSans(
+                        fontSize: 25, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(
@@ -177,9 +183,12 @@ class JobDetailPage extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
-                  },
-                  child: Text("Continue",style: GoogleFonts.openSans(fontSize: 15,fontWeight: FontWeight.bold),),
+                  onPressed: () {},
+                  child: Text(
+                    "Continue",
+                    style: GoogleFonts.openSans(
+                        fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
                   style: TextButton.styleFrom(
                     elevation: 5,
                     fixedSize: Size(150, 50),
@@ -218,7 +227,8 @@ class JobDetailPage extends StatelessWidget {
           ),
           Text(
             "Requirement $index",
-            style: GoogleFonts.openSans(fontSize: 13,fontWeight: FontWeight.bold),
+            style:
+                GoogleFonts.openSans(fontSize: 13, fontWeight: FontWeight.bold),
           ),
         ],
       ),

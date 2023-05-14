@@ -44,10 +44,10 @@ class Category1Page extends StatelessWidget {
   }
 
   Widget _buildCard(
-      String name,
-      String description,
-      String imgPath,
-      ) {
+    String name,
+    String description,
+    String imgPath,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(top: 15, bottom: 5, left: 5, right: 5),
       child: InkWell(

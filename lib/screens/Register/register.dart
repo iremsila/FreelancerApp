@@ -85,6 +85,7 @@ class _RegisterPageState extends State<RegisterPage>
     password: 'A}c74e&QAI[x',
     db: 'httpdegm_database1',
   );
+
   Future<void> register() async {
     // MySQL bağlantısı
     final connect = await mysql.MySqlConnection.connect(settings);
