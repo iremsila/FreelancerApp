@@ -50,6 +50,7 @@ class _JobScreenState extends State<JobScreen>
     CardItem(
       urlImage: 'assets/images/AI.jpg',
       title: 'AI Artist',
+
     ),
     CardItem(
       urlImage: 'assets/images/logo.webp',
