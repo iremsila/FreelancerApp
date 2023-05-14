@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mysql1/mysql1.dart';
 import 'package:intl/intl.dart';
+import 'package:mysql1/mysql1.dart' as mysql;
 
 class UploadJobNow extends StatefulWidget {
   @override
@@ -9,99 +9,34 @@ class UploadJobNow extends StatefulWidget {
 
 class _UploadJobNow extends State<UploadJobNow> {
   final _formKey = GlobalKey<FormState>();
-  DateTime? selectedDate; // Nullable olarak güncellendi
-  String? selectedCountry; // Seçilen ülke
-  MySqlConnection? conn;
 
-  TextEditingController jobTitleController = TextEditingController();
-  TextEditingController categoryController = TextEditingController();
-  TextEditingController jobDescriptionController = TextEditingController();
-  TextEditingController budgetController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-
-
+  late String _jobTitle;
+  late String _category;
+  late String _location;
+  late String _description;
+  late DateTime _selectedDate;
+  late String _budget;
   late String selectedOption = '';
-
+  // MySQL bağlantı ayarları
+  String? selectedCountry;
 
   final List<String> countries = [
-    'China',
-    'England',
-    'France',
-    'Germany',
-    'Greece',
-    'India',
-    'Japan',
-    'Russia',
-    'Spain',
-    'The U.S.A',
-    'Türkiye',
+    'Country 1',
+    'Country 2',
+    'Country 3',
+    'Country 4',
   ];
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(DateTime.now().year - 100),
-      lastDate: DateTime(DateTime.now().year + 2),
-    );
-
-    if (picked != null) {
-      setState(() {
-        selectedDate = picked;
-        dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate!);
-      });
-    }
-  }
-
-  Future<void> _postToDatabase() async {
-    // MySQL veritabanına bağlanmak için ayarları tanımlayın
-    var settings = new ConnectionSettings(
-      host: '213.238.183.81',
-      port: 3306,
-      user: 'httpdegm_hudai',
-      password: ',sPE[gd^hbl1',
-      db: 'httpdegm_database1',
-    );
-
-    // Veritabanına bağlanın
-    conn = await MySqlConnection.connect(settings);
-
-    // Girilen verileri alın
-    String jobTitle = jobTitleController.text;
-    String category = categoryController.text;
-    String jobDescription = jobDescriptionController.text;
-    String? country = selectedOption == 'remote' ? 'Remote' : selectedCountry;
-    String budget = budgetController.text;
-    String date = dateController.text;
-
-
-    // Veritabanına verileri ekleyin
-    await conn!.query(
-      'INSERT INTO upload_job (job_title, category, location, description, budget, date_posted) VALUES (?, ?, ?, ?, ?, ?)',
-      [jobTitle, category, country, jobDescription, budget, date],
-    );
-
-    // Veritabanı bağlantısını kapatın
-    await conn!.close();
-
-    // Veriler gönderildikten sonra alanları temizleyin
-    jobTitleController.clear();
-    categoryController.clear();
-    jobDescriptionController.clear();
-    budgetController.clear();
-    dateController.clear();
-    setState(() {
-      selectedDate = null;
-      selectedCountry = null;
-      selectedOption = '';
-    });
-
-    // Gönderildiğinde bir geri bildirim mesajı gösterin
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Job posted successfully'),
-      ),
-    );
+  final settings = mysql.ConnectionSettings(
+    host: '213.238.183.81',
+    port: 3306,
+    user: 'httpdegm_melike',
+    password: 'A}c74e&QAI[x',
+    db: 'httpdegm_database1',
+  );
+  void initState() {
+    super.initState();
+    _selectedDate = DateTime.now();
   }
 
 //ARKADAŞLAR BURADAKİ BİLGİLER BANA AİT OLDUĞU İÇİN GİTHUB UYARI VERDİ HOST, USER VE PASSWORD KISMINI KENDİNİZE GÖRE DOLDURMANIZ LAZIM.
@@ -151,7 +86,9 @@ class _UploadJobNow extends State<UploadJobNow> {
                       }
                       return null;
                     },
-                    controller: jobTitleController,
+                    onSaved: (value) {
+                      _jobTitle = value!;
+                    },
                   ),
                   SizedBox(height: 16.0),
                   TextFormField(
@@ -165,7 +102,9 @@ class _UploadJobNow extends State<UploadJobNow> {
                       }
                       return null;
                     },
-                    controller: categoryController,
+                    onSaved: (value) {
+                      _category = value!;
+                    },
                   ),
                   SizedBox(height: 16.0),
                   TextFormField(
@@ -181,7 +120,9 @@ class _UploadJobNow extends State<UploadJobNow> {
                       }
                       return null;
                     },
-                    controller: jobDescriptionController,
+                    onSaved: (value) {
+                      _description = value!;
+                    },
                   ),
                   SizedBox(height: 16.0),
                   ListTile(
@@ -239,16 +180,14 @@ class _UploadJobNow extends State<UploadJobNow> {
                       }
                       return null;
                     },
-                    controller: budgetController,
+                    onSaved: (value) {
+                      _budget = value!;
+                    },
                   ),
                   SizedBox(
                     height: 16,
                   ),
                   TextFormField(
-                    readOnly: true,
-                    onTap: () {
-                      _selectDate(context);
-                    },
                     decoration: InputDecoration(
                       labelText: 'Date in format dd-mm-yy',
                       border: OutlineInputBorder(),
@@ -259,12 +198,40 @@ class _UploadJobNow extends State<UploadJobNow> {
                       }
                       return null;
                     },
-                    controller: dateController,
+                    onSaved: (value) {
+                      _selectedDate = DateFormat('dd-MM-yyyy').parseUTC(value!);
+                    },
                   ),
                   SizedBox(height: 10.0),
                   ElevatedButton(
-                    onPressed: () {
-                      _postToDatabase();
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+
+                        // MySQL bağlantısı
+                        final conn =
+                            await mysql.MySqlConnection.connect(settings);
+
+                        // Kayıt ekleme
+                        await conn.query(
+                            '''INSERT INTO upload_job (job_title, category, location, description, budget, date_posted) VALUES (?, ?, ?, ?, ?, ?)''',
+                            [
+                              _jobTitle,
+                              _category,
+                              _location,
+                              _description,
+                              _budget,
+                              _selectedDate
+                            ]);
+                        await conn.close();
+
+                        // Başarılı bildirimi
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Job posted successfully'),
+                          ),
+                        );
+                      }
                     },
                     child: Text('Post Job'),
                   )
