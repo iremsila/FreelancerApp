@@ -17,16 +17,22 @@ class _UploadJobNow extends State<UploadJobNow> {
   late DateTime _selectedDate;
   late String _budget;
   late String selectedOption = '';
-  // MySQL bağlantı ayarları
+
   String? selectedCountry;
 
   final List<String> countries = [
-    'Country 1',
-    'Country 2',
-    'Country 3',
-    'Country 4',
+    'China',
+    'England',
+    'France',
+    'Germany',
+    'Greece',
+    'India',
+    'Japan',
+    'Russia',
+    'Spain',
+    'The U.S.A',
+    'Türkiye',
   ];
-
   final settings = mysql.ConnectionSettings(
     host: '213.238.183.81',
     port: 3306,
@@ -34,6 +40,7 @@ class _UploadJobNow extends State<UploadJobNow> {
     password: 'A}c74e&QAI[x',
     db: 'httpdegm_database1',
   );
+
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
