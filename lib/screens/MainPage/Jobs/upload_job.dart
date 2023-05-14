@@ -16,8 +16,16 @@ class _UploadJobNow extends State<UploadJobNow> {
   late String _description;
   late DateTime _selectedDate;
   late String _budget;
-
+  late String selectedOption = '';
   // MySQL bağlantı ayarları
+  String? selectedCountry;
+
+  final List<String> countries = [
+    'Country 1',
+    'Country 2',
+    'Country 3',
+    'Country 4',
+  ];
 
   final settings = mysql.ConnectionSettings(
     host: '213.238.183.81',
@@ -35,6 +43,14 @@ class _UploadJobNow extends State<UploadJobNow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -93,22 +109,6 @@ class _UploadJobNow extends State<UploadJobNow> {
                   SizedBox(height: 16.0),
                   TextFormField(
                     decoration: InputDecoration(
-                      labelText: 'Location',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter location';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _location = value!;
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  TextFormField(
-                    decoration: InputDecoration(
                       labelText: 'Job Description',
                       border: OutlineInputBorder(),
                     ),
@@ -124,6 +124,48 @@ class _UploadJobNow extends State<UploadJobNow> {
                       _description = value!;
                     },
                   ),
+                  SizedBox(height: 16.0),
+                  ListTile(
+                    title: const Text('Remote'),
+                    leading: Radio(
+                      value: 'remote',
+                      groupValue: selectedOption,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedOption = value as String;
+                          selectedCountry = null;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text('In-person'),
+                    leading: Radio(
+                      value: 'in-person',
+                      groupValue: selectedOption,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedOption = value as String;
+                        });
+                      },
+                    ),
+                  ),
+                  if (selectedOption == 'in-person')
+                    DropdownButton<String>(
+                      value: selectedCountry,
+                      hint: Text('SELECT A COUNTRY'),
+                      onChanged: (String? value) {
+                        setState(() {
+                          selectedCountry = value;
+                        });
+                      },
+                      items: countries.map((String country) {
+                        return DropdownMenuItem<String>(
+                          value: country,
+                          child: Text(country),
+                        );
+                      }).toList(),
+                    ),
                   SizedBox(
                     height: 16,
                   ),
@@ -168,7 +210,7 @@ class _UploadJobNow extends State<UploadJobNow> {
 
                         // MySQL bağlantısı
                         final conn =
-                        await mysql.MySqlConnection.connect(settings);
+                            await mysql.MySqlConnection.connect(settings);
 
                         // Kayıt ekleme
                         await conn.query(

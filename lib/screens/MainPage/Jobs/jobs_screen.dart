@@ -95,7 +95,7 @@ class _JobScreenState extends State<JobScreen>
           Row(
             children: [
               Text(
-                "  Populer Services",
+                "  Popular Services",
                 textAlign: TextAlign.start,
                 style: GoogleFonts.montserrat(
                     fontSize: 20, fontWeight: FontWeight.bold),
