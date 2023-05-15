@@ -70,7 +70,7 @@ class _UploadJobNow extends State<UploadJobNow> {
     String jobDescription = jobDescriptionController.text;
     String? country = selectedOption == 'remote' ? 'Remote' : selectedCountry;
     String budget = budgetController.text;
-    String date = dateController.text;
+    String date = DateFormat('yyyy-MM-dd').format(selectedDate!);
 
     // Veritabanına verileri ekleyin
     await conn!.query(
