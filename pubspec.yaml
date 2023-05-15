@@ -45,6 +45,7 @@ dependencies:
   dropdown_button2: ^2.1.0
   intl: ^0.18.1
   google_fonts: ^4.0.4
+  image_picker: ^0.8.7+5
 
 dev_dependencies:
   flutter_test:
