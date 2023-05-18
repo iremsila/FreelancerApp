@@ -1,6 +1,5 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'Jobs/jobs_screen.dart';
 import 'Jobs/posted_job.dart';
 import 'Profile/profile_screen.dart';
@@ -17,7 +16,7 @@ class _MainPageState extends State<MainPage> {
   int index = 0;
 
   final screens = [
-    const JobScreen(),
+    JobScreen(),
     JobListScreen(),
     SearchScreen(),
     ProfileScreen(),
@@ -49,21 +48,6 @@ class _MainPageState extends State<MainPage> {
         child: Scaffold(
           backgroundColor: Colors.grey.shade50,
           extendBody: true,
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(40),
-            child: AppBar(
-              systemOverlayStyle: const SystemUiOverlayStyle(
-                  statusBarColor: Colors.transparent),
-              backgroundColor: Colors.white,
-              title: const Padding(
-                padding: EdgeInsets.only(bottom: 0, top: 0, left: 0, right: 0),
-                child: Text('WorkWise',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
-              ),
-              elevation: 2,
-            ),
-          ),
           body: screens[index],
           bottomNavigationBar: Container(
             decoration: const BoxDecoration(

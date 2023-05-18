@@ -1,7 +1,5 @@
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -75,11 +73,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await conn.close();
   }
 
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('userId'); // Kullanıcıyı çıkış yapmış olarak işaretle
+
+    Navigator.pushReplacementNamed(context, '/'); // LoginPage'a yönlendir
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profil Sayfası'),
+        automaticallyImplyLeading: false,
+        systemOverlayStyle:
+            const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        backgroundColor: Colors.white,
+        title: Text(
+          'Profile',
+        ),
+        elevation: 2,
+        actions: [
+          IconButton(
+            onPressed: logout, // logout metodunu onPressed olayına bağla
+            icon: Icon(Icons.logout),
+          ),
+        ],
       ),
       body: Stack(
         children: [

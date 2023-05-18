@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mysql1/mysql1.dart';
 
 import '../Jobs/job_detail.dart';
@@ -44,6 +45,16 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        systemOverlayStyle:
+        const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        backgroundColor: Colors.white,
+        title: Text(
+          'Discover & Search',
+        ),
+        elevation: 2,
+      ),
       body: Column(
         children: [
           Padding(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -46,7 +47,16 @@ class _JobListScreenState extends State<JobListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Job You Posted'),
+        automaticallyImplyLeading: false,
+        systemOverlayStyle:
+            const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        backgroundColor: Colors.white,
+        title: Center(
+          child: Text(
+            'Job You Posted',
+          ),
+        ),
+        elevation: 2,
       ),
       body: ListView.builder(
         itemCount: jobList.length,

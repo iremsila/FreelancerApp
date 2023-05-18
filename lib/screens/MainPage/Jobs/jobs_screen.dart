@@ -1,12 +1,14 @@
 import 'package:WorkWise/screens/MainPage/Jobs/upload_job.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'job_detail.dart';
 
 class JobScreen extends StatefulWidget {
-  const JobScreen({super.key});
+  JobScreen({super.key});
 
   @override
   State<JobScreen> createState() => _JobScreenState();
@@ -15,10 +17,16 @@ class JobScreen extends StatefulWidget {
 class _JobScreenState extends State<JobScreen>
     with SingleTickerProviderStateMixin {
   List<Map<String, dynamic>> jobs = [];
+  String userRole = '';
 
   @override
   void initState() {
     super.initState();
+    fetchUserRole().then((role) {
+      setState(() {
+        userRole = role;
+      });
+    });
     fetchData().then((data) {
       setState(() {
         jobs = data;
@@ -33,6 +41,23 @@ class _JobScreenState extends State<JobScreen>
     return results.map((resultRow) {
       return Map<String, dynamic>.from(resultRow.fields);
     }).toList();
+  }
+
+  Future<String> fetchUserRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt('userId') ?? 0;
+    var conn = await getConnection();
+    var results = await conn.query(
+      'SELECT freelanceroremployer FROM User WHERE id = ?',
+      [userId],
+    ); // Kullanıcının kimlik bilgisine göre sorguyu güncelleyin
+    await conn.close();
+    if (results.isNotEmpty) {
+      var row = results.first;
+      return row['freelanceroremployer'];
+    } else {
+      return ''; // Varsayılan rol değeri, eğer kullanıcının rolü bulunamazsa
+    }
   }
 
   Future<MySqlConnection> getConnection() async {
@@ -68,37 +93,52 @@ class _JobScreenState extends State<JobScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        systemOverlayStyle:
+            const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        backgroundColor: Colors.white,
+        title: Text('WorkWise',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
+        elevation: 2,
+        actions: [
+          // Kullanıcı işveren ise düğmeyi göster
+          if (userRole == 'Employer')
+            Padding(
+              padding: EdgeInsets.only(right: 16, bottom: 8),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => UploadJobNow()),
+                  );
+                },
+                child: Text("POST JOB NOW"),
+                style: TextButton.styleFrom(
+                  elevation: 5,
+                  fixedSize: Size(150, 25),
+                  foregroundColor: Colors.cyan[900],
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(color: Colors.cyan),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
       backgroundColor: Colors.transparent,
       body: Column(
         children: [
-          const SizedBox(height: 15),
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => UploadJobNow()),
-              );
-            },
-            child: Text("POST JOB NOW"),
-            style: TextButton.styleFrom(
-              elevation: 5,
-              fixedSize: Size(150, 50),
-              foregroundColor: Colors.cyan[900],
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: BorderSide(color: Colors.cyan),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
           Row(
             children: [
               Text(
                 "  Popular Services",
                 textAlign: TextAlign.start,
-                style: GoogleFonts.montserrat(
-                    fontSize: 20, fontWeight: FontWeight.bold),
+                style: GoogleFonts.openSans(
+                    fontSize: 25, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -118,7 +158,7 @@ class _JobScreenState extends State<JobScreen>
             children: [
               Text(
                 "  Explore beautiful work,\n  picked for you.",
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.openSans(
                     fontSize: 25, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.start,
               ),

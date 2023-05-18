@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:intl/intl.dart';
 import '../../../constans/colors.dart';
 
 class JobDetailPage extends StatelessWidget {
@@ -109,10 +109,6 @@ class JobDetailPage extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage("assets/images/logo.png"),
-                    ),
                     const SizedBox(
                       width: 5,
                     ),
@@ -122,10 +118,15 @@ class JobDetailPage extends StatelessWidget {
                           fontSize: 15, fontWeight: FontWeight.bold),
                     ),
                     Spacer(),
-                    Text(
-                      "273 applicants",
-                      style: GoogleFonts.openSans(
-                          fontSize: 15, fontWeight: FontWeight.bold),
+                    Column(
+                      children: [
+                        Text(
+                          DateFormat('yyyy-MM-dd')
+                              .format(jobData['date_posted']),
+                          style: GoogleFonts.openSans(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -165,7 +166,7 @@ class JobDetailPage extends StatelessWidget {
                   child: Text(
                     "Job Requirements",
                     style: GoogleFonts.openSans(
-                        fontSize: 25, fontWeight: FontWeight.bold),
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(
@@ -183,10 +184,28 @@ class JobDetailPage extends StatelessWidget {
                     height: 4,
                   ),
                 ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Budget",
+                    style: GoogleFonts.openSans(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    '\$${jobData['budget']}',
+                    style: GoogleFonts.openSans(fontSize: 15),
+                  ),
+                ),
                 TextButton(
                   onPressed: () {},
                   child: Text(
-                    "Continue",
+                    "Apply",
                     style: GoogleFonts.openSans(
                         fontSize: 15, fontWeight: FontWeight.bold),
                   ),
@@ -229,7 +248,7 @@ class JobDetailPage extends StatelessWidget {
           Text(
             "Requirement $index",
             style:
-                GoogleFonts.openSans(fontSize: 13, fontWeight: FontWeight.bold),
+                GoogleFonts.openSans(fontSize: 11, fontWeight: FontWeight.bold),
           ),
         ],
       ),
