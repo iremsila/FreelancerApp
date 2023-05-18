@@ -2,6 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Jobs/jobs_screen.dart';
+import 'Jobs/posted_job.dart';
 import 'Profile/profile_screen.dart';
 import 'Search/search_job.dart';
 
@@ -17,8 +18,9 @@ class _MainPageState extends State<MainPage> {
 
   final screens = [
     const JobScreen(),
+    JobListScreen(),
     SearchScreen(),
-    const ProfileScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -26,6 +28,10 @@ class _MainPageState extends State<MainPage> {
     final items = <Widget>[
       const Icon(
         Icons.home,
+        size: 30,
+      ),
+      const Icon(
+        Icons.document_scanner,
         size: 30,
       ),
       const Icon(

@@ -1,4 +1,6 @@
-import 'package:FreelancerApp/screens/SplashScreen/splash_screen.dart';
+import 'package:WorkWise/screens/MainPage/Category/category1_page.dart';
+import 'package:WorkWise/screens/MainPage/main_page.dart';
+import 'package:WorkWise/screens/SplashScreen/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() async {

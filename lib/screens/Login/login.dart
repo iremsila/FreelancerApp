@@ -1,8 +1,10 @@
-import 'package:FreelancerApp/screens/MainPage/main_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
+import 'package:mysql1/mysql1.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../MainPage/main_page.dart';
 import '../forgot_password.dart';
 import '../register/register.dart';
 
@@ -39,7 +41,7 @@ class _LoginPageState extends State<LoginPage>
   );
 
   Future<bool> login() async {
-    final connect = await mysql.MySqlConnection.connect(settings);
+    final connect = await MySqlConnection.connect(settings);
 
     final results = await connect.query(
       'SELECT * FROM User WHERE email = ? AND password = ?',
@@ -49,10 +51,14 @@ class _LoginPageState extends State<LoginPage>
     await connect.close();
 
     if (results.isNotEmpty) {
-      // Eşleşen kullanıcı var, giriş yapılabilir
+      final userRow = results.first;
+      final int userId = userRow['id'];
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      await prefs.setInt('userId', userId);
       return true;
     } else {
-      // Eşleşen kullanıcı yok, giriş yapılamaz
       return false;
     }
   }

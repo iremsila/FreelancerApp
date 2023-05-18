@@ -1,4 +1,4 @@
-import 'package:FreelancerApp/screens/MainPage/Jobs/upload_job.dart';
+import 'package:WorkWise/screens/MainPage/Jobs/upload_job.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';

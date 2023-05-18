@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:intl/intl.dart';
+import 'package:progress_state_button/progress_button.dart';
 
 class UploadJobNow extends StatefulWidget {
   @override
@@ -52,7 +53,6 @@ class _UploadJobNow extends State<UploadJobNow> {
   }
 
   Future<void> _postToDatabase() async {
-    // MySQL veritabanına bağlanmak için ayarları tanımlayın
     var settings = new ConnectionSettings(
       host: '213.238.183.81',
       port: 3306,
@@ -61,10 +61,8 @@ class _UploadJobNow extends State<UploadJobNow> {
       db: 'httpdegm_database1',
     );
 
-    // Veritabanına bağlanın
     conn = await MySqlConnection.connect(settings);
 
-    // Girilen verileri alın
     String jobTitle = jobTitleController.text;
     String category = categoryController.text;
     String jobDescription = jobDescriptionController.text;
@@ -72,7 +70,6 @@ class _UploadJobNow extends State<UploadJobNow> {
     String budget = budgetController.text;
     String date = DateFormat('yyyy-MM-dd').format(selectedDate!);
 
-    // Veritabanına verileri ekleyin
     await conn!.query(
       'INSERT INTO upload_job (job_title, category, location, description, budget, date_posted) VALUES (?, ?, ?, ?, ?, ?)',
       [jobTitle, category, country, jobDescription, budget, date],
@@ -81,7 +78,6 @@ class _UploadJobNow extends State<UploadJobNow> {
     // Veritabanı bağlantısını kapatın
     await conn!.close();
 
-    // Veriler gönderildikten sonra alanları temizleyin
     jobTitleController.clear();
     categoryController.clear();
     jobDescriptionController.clear();
@@ -93,7 +89,6 @@ class _UploadJobNow extends State<UploadJobNow> {
       selectedOption = '';
     });
 
-    // Gönderildiğinde bir geri bildirim mesajı gösterin
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Job posted successfully'),
@@ -101,11 +96,17 @@ class _UploadJobNow extends State<UploadJobNow> {
     );
   }
 
-//ARKADAŞLAR BURADAKİ BİLGİLER BANA AİT OLDUĞU İÇİN GİTHUB UYARI VERDİ HOST, USER VE PASSWORD KISMINI KENDİNİZE GÖRE DOLDURMANIZ LAZIM.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text(
+          "Post a Job",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -123,15 +124,7 @@ class _UploadJobNow extends State<UploadJobNow> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Post a Job",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 10.0),
-                  Text(
-                    "You must fill in all fields correctly.",
+                    "Please fill in all fields correctly.",
                     style: TextStyle(
                       fontSize: 20,
                     ),
@@ -181,6 +174,10 @@ class _UploadJobNow extends State<UploadJobNow> {
                     controller: jobDescriptionController,
                   ),
                   SizedBox(height: 16.0),
+                  Text(
+                    "Select work type",
+                    style: TextStyle(fontSize: 16),
+                  ),
                   ListTile(
                     title: const Text('Remote'),
                     leading: Radio(
@@ -209,7 +206,7 @@ class _UploadJobNow extends State<UploadJobNow> {
                   if (selectedOption == 'in-person')
                     DropdownButton<String>(
                       value: selectedCountry,
-                      hint: Text('SELECT A COUNTRY'),
+                      hint: Text('Selecet a Country'),
                       onChanged: (String? value) {
                         setState(() {
                           selectedCountry = value;
@@ -247,7 +244,8 @@ class _UploadJobNow extends State<UploadJobNow> {
                       _selectDate(context);
                     },
                     decoration: InputDecoration(
-                      labelText: 'Date in format dd-mm-yy',
+                      suffixIcon: Icon(Icons.calendar_month),
+                      labelText: 'Tap to Select Date ',
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
