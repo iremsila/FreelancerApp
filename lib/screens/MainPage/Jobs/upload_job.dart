@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:intl/intl.dart';
 import 'package:progress_state_button/progress_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UploadJobNow extends StatefulWidget {
   @override
@@ -53,6 +54,8 @@ class _UploadJobNow extends State<UploadJobNow> {
   }
 
   Future<void> _postToDatabase() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt('userId') ?? 0;
     var settings = new ConnectionSettings(
       host: '213.238.183.81',
       port: 3306,
@@ -71,8 +74,8 @@ class _UploadJobNow extends State<UploadJobNow> {
     String date = DateFormat('yyyy-MM-dd').format(selectedDate!);
 
     await conn!.query(
-      'INSERT INTO upload_job (job_title, category, location, description, budget, date_posted) VALUES (?, ?, ?, ?, ?, ?)',
-      [jobTitle, category, country, jobDescription, budget, date],
+      'INSERT INTO upload_job1 (user_id, job_title, category, location, description, budget, date_posted) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [userId, jobTitle, category, country, jobDescription, budget, date],
     );
 
     // Veritabanı bağlantısını kapatın

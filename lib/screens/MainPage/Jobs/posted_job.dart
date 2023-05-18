@@ -15,6 +15,7 @@ class _JobListScreenState extends State<JobListScreen> {
   @override
   void initState() {
     super.initState();
+    fetchDataFromDatabase();
   }
 
   Future<void> fetchDataFromDatabase() async {
@@ -30,7 +31,7 @@ class _JobListScreenState extends State<JobListScreen> {
     ));
 
     final jobResult = await conn.query(
-      'SELECT * FROM upload_job WHERE id = ?',
+      'SELECT * FROM upload_job1 WHERE user_id = ?',
       [userId],
     );
 

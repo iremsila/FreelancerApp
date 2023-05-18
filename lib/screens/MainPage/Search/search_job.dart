@@ -18,15 +18,15 @@ class _SearchScreenState extends State<SearchScreen> {
     final settings = ConnectionSettings(
       host: '213.238.183.81',
       port: 3306,
-      user: 'httpdegm_melike',
-      password: 'A}c74e&QAI[x',
+      user: 'httpdegm_hudai',
+      password: ',sPE[gd^hbl1',
       db: 'httpdegm_database1',
     );
 
     final conn = await MySqlConnection.connect(settings);
 
     final results = await conn.query(
-      'SELECT * FROM upload_job WHERE category LIKE ? OR location LIKE ? OR job_title LIKE ? ',
+      'SELECT * FROM upload_job1 WHERE category LIKE ? OR location LIKE ? OR job_title LIKE ? ',
       ['%$keyword%', '%$keyword%', '%$keyword%'],
     );
 
