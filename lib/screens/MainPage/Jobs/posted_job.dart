@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,7 +15,6 @@ class _JobListScreenState extends State<JobListScreen> {
   @override
   void initState() {
     super.initState();
-    fetchDataFromDatabase();
   }
 
   Future<void> fetchDataFromDatabase() async {
@@ -51,10 +51,10 @@ class _JobListScreenState extends State<JobListScreen> {
         systemOverlayStyle:
             const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
         backgroundColor: Colors.white,
-        title: Center(
-          child: Text(
-            'Job You Posted',
-          ),
+        title: Text(
+          'Job You Posted',
+          style:
+              GoogleFonts.openSans(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         elevation: 2,
       ),

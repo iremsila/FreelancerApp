@@ -2,6 +2,7 @@ import 'package:WorkWise/screens/MainPage/Jobs/upload_job.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -98,8 +99,11 @@ class _JobScreenState extends State<JobScreen>
         systemOverlayStyle:
             const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
         backgroundColor: Colors.white,
-        title: Text('WorkWise',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
+        title: Text(
+          'WorkWise',
+          style:
+              GoogleFonts.openSans(fontSize: 30, fontWeight: FontWeight.bold),
+        ),
         elevation: 2,
         actions: [
           // Kullanıcı işveren ise düğmeyi göster
@@ -113,7 +117,11 @@ class _JobScreenState extends State<JobScreen>
                     MaterialPageRoute(builder: (context) => UploadJobNow()),
                   );
                 },
-                child: Text("POST JOB NOW"),
+                child: Text(
+                  "POST JOB NOW",
+                  style: GoogleFonts.openSans(
+                      fontSize: 15, fontWeight: FontWeight.bold),
+                ),
                 style: TextButton.styleFrom(
                   elevation: 5,
                   fixedSize: Size(150, 25),
@@ -149,7 +157,7 @@ class _JobScreenState extends State<JobScreen>
               padding: const EdgeInsets.all(5),
               scrollDirection: Axis.horizontal,
               itemCount: 4,
-              separatorBuilder: (context, _) => const SizedBox(width: 12),
+              separatorBuilder: (context, _) => const SizedBox(width: 5),
               itemBuilder: (context, index) => buildCard(item: items[index]),
             ),
           ),
@@ -158,8 +166,7 @@ class _JobScreenState extends State<JobScreen>
             children: [
               Text(
                 "  Explore beautiful work,\n  picked for you.",
-                style: GoogleFonts.openSans(
-                    fontSize: 25, fontWeight: FontWeight.bold),
+                style: GoogleFonts.openSans(fontSize: 25),
                 textAlign: TextAlign.start,
               ),
             ],
@@ -169,10 +176,21 @@ class _JobScreenState extends State<JobScreen>
             child: ListView.builder(
               itemCount: jobs.length,
               itemBuilder: (context, index) {
-                return Card(
+                return Container(
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(13),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade200,
+                        blurRadius: 10,
+                        spreadRadius: 3,
+                        offset: Offset(3, 4),
+                      )
+                    ],
+                  ),
                   child: ListTile(
-                    title: Text(jobs[index]['job_title']),
-                    subtitle: Text(jobs[index]['description']),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -181,6 +199,39 @@ class _JobScreenState extends State<JobScreen>
                         ),
                       );
                     },
+                    leading: CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Colors.grey,
+                    ),
+                    title: Text(
+                      jobs[index]['job_title'],
+                      style: GoogleFonts.openSans(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(jobs[index]['location'],
+                            style: GoogleFonts.openSans()),
+                        SizedBox(height: 20), // İki metin arasına boşluk ekler
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '\$${jobs[index]['budget']}',
+                              style: GoogleFonts.openSans(),
+                            ),
+                            Text(
+                              DateFormat('yyyy-MM-dd').format(
+                                jobs[index]['date_posted'],
+                              ),
+                              style: GoogleFonts.openSans(),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -216,7 +267,9 @@ class _JobScreenState extends State<JobScreen>
                       )),
                 ),
                 const SizedBox(height: 8),
-                Text(item.title, style: GoogleFonts.anton(fontSize: 13)),
+                Text(item.title,
+                    style: GoogleFonts.openSans(
+                        fontSize: 10, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
               ],
             ),

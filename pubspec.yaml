@@ -49,6 +49,7 @@ dependencies:
   progress_state_button: ^1.0.4
   shared_preferences: ^2.1.1
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

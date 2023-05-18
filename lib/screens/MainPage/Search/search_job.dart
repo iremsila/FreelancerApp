@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
 
 import '../Jobs/job_detail.dart';
@@ -52,6 +53,8 @@ class _SearchScreenState extends State<SearchScreen> {
         backgroundColor: Colors.white,
         title: Text(
           'Discover & Search',
+          style: GoogleFonts.openSans(
+              fontSize: 20, fontWeight: FontWeight.bold),
         ),
         elevation: 2,
       ),

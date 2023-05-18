@@ -164,29 +164,6 @@ class JobDetailPage extends StatelessWidget {
                 Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    "Job Requirements",
-                    style: GoogleFonts.openSans(
-                        fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: 3,
-                  itemBuilder: (context, index) => ingredients(context, index),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  child: Divider(
-                    height: 4,
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
                     "Budget",
                     style: GoogleFonts.openSans(
                         fontSize: 20, fontWeight: FontWeight.bold),
@@ -225,33 +202,6 @@ class JobDetailPage extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  ingredients(BuildContext context, int index) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            radius: 10,
-            backgroundColor: Color(0xFFE3FFF8),
-            child: Icon(
-              Icons.done,
-              size: 15,
-              color: primary,
-            ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(
-            "Requirement $index",
-            style:
-                GoogleFonts.openSans(fontSize: 11, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
     );
   }
 }

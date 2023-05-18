@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -90,6 +91,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.white,
         title: Text(
           'Profile',
+          style: GoogleFonts.openSans(
+              fontSize: 20, fontWeight: FontWeight.bold),
         ),
         elevation: 2,
         actions: [
