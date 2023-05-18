@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Login/login.dart';
+
 class ProfileScreen extends StatefulWidget {
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -42,11 +44,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       [userId],
     );
 
+    final resultD = await conn.query(
+      'SELECT about_me FROM profile WHERE id= ?',
+      [userId],
+    );
+
     if (results.isNotEmpty) {
       final row = results.first;
       setState(() {
         nameandsurname = row['nameandsurname'];
         email = row['email'];
+
         _descriptionController.text = description;
       });
     }
@@ -78,7 +86,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('userId'); // Kullanıcıyı çıkış yapmış olarak işaretle
 
-    Navigator.pushReplacementNamed(context, '/'); // LoginPage'a yönlendir
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => LoginPage(
+                showRegisterPage: () {},
+              )),
+    );
+    // LoginPage'a yönlendir
   }
 
   @override
@@ -91,8 +106,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.white,
         title: Text(
           'Profile',
-          style: GoogleFonts.openSans(
-              fontSize: 20, fontWeight: FontWeight.bold),
+          style:
+              GoogleFonts.openSans(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         elevation: 2,
         actions: [
