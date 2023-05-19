@@ -1,43 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mysql1/mysql1.dart';
-
-import '../Jobs/job_detail.dart';
-
+import 'package:mysql1/mysql1.dart' as mysql;
 class SearchScreen extends StatefulWidget {
   @override
-  _SearchScreenState createState() => _SearchScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final _searchController = TextEditingController();
-  List<Map<String, dynamic>> _searchResults = [];
+  final settings = mysql.ConnectionSettings(
+    host: '213.238.183.81',
+    port: 3306,
+    user: 'httpdegm_melike',
+    password: 'A}c74e&QAI[x',
+    db: 'httpdegm_database1',
+  );
 
-  Future<void> _performSearch(String? keyword) async {
-    final settings = ConnectionSettings(
-      host: '213.238.183.81',
-      port: 3306,
-      user: 'httpdegm_hudai',
-      password: ',sPE[gd^hbl1',
-      db: 'httpdegm_database1',
-    );
+  List<String> searchResults = [];
 
-    final conn = await MySqlConnection.connect(settings);
+  void search(String query) async {
+    final conn = await mysql.MySqlConnection.connect(settings);
 
-    final results = await conn.query(
-      'SELECT * FROM upload_job1 WHERE category LIKE ? OR location LIKE ? OR job_title LIKE ? ',
-      ['%$keyword%', '%$keyword%', '%$keyword%'],
-    );
-
-    final List<Map<String, dynamic>> searchResults = [];
-    for (var row in results) {
-      final Map<String, dynamic> rowData = Map.from(row.fields);
-      searchResults.add(rowData);
-    }
+    final results = await conn.query('SELECT * FROM upload_job WHERE job_title LIKE ? OR category LIKE ? OR location LIKE ? OR description LIKE ? OR budget LIKE ?', ['%$query%', '%$query%', '%$query%', '%$query%', '%$query%']);
 
     setState(() {
-      _searchResults = searchResults;
+      searchResults = results.map((r) {
+        return '${r['job_title']}, ${r['category']}, ${r['location']}, ${r['description']}, ${r['budget']}';
+      }).toList();
     });
 
     await conn.close();
@@ -46,58 +33,38 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        systemOverlayStyle:
-        const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
-        backgroundColor: Colors.white,
-        title: Text(
-          'Discover & Search',
-          style: GoogleFonts.openSans(
-              fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        elevation: 2,
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (value) {
-                setState(() {
-                  _searchResults.clear(); // Önceki arama sonuçlarını temizle
-                });
-                if (value.isNotEmpty) {
-                  _performSearch(value);
-                }
-              },
+      body: Container(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            TextFormField(
+              onChanged: search,
               decoration: InputDecoration(
-                hintText: 'Search',
+                hintText: 'Search...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.grey[200],
+                contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                suffixIcon: Icon(Icons.search),
               ),
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _searchResults.length,
-              itemBuilder: (context, index) {
-                final result = _searchResults[index];
-                return ListTile(
-                  title: Text(result['category']),
-                  subtitle: Text(result['location']),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => JobDetailPage(result),
-                      ),
-                    );
-                  },
-                );
-              },
+            SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: searchResults.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(searchResults[index]),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

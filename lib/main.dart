@@ -1,5 +1,7 @@
+import 'package:WorkWise/provider/theme_provider.dart';
 import 'package:WorkWise/screens/SplashScreen/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,12 +14,20 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (context)=>themeProvider(ThemeData())),
+      ],
+      child: ChangeNotifierProvider(
+          create: (context) => themeProvider(ThemeData())),
+      builder: (context, child) {
+    final provider = Provider.of<themeProvider>(context);
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      home: SplashScreen(),
-      theme:
-          ThemeData(brightness: Brightness.light, primarySwatch: Colors.cyan),
+    theme: provider.getTheme(),
+    title: 'Flutter Demo',
+    home: SplashScreen(),
     );
-  }
-}
+    },
+    );
+  } }

@@ -43,11 +43,14 @@ dependencies:
   lottie: ^2.3.2
   mysql1: ^0.20.0
   dropdown_button2: ^2.1.0
-  intl: ^0.18.1
+  intl: ^0.17.0
   google_fonts: ^4.0.4
   image_picker: ^0.8.7+5
   progress_state_button: ^1.0.4
   shared_preferences: ^2.1.1
+  url_launcher: ^6.1.11
+  settings_ui: ^2.0.2
+  device_preview: ^1.1.0
 
 
 dev_dependencies:
