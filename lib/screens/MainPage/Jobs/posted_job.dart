@@ -83,19 +83,19 @@ class _JobListScreenState extends State<JobListScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           systemOverlayStyle:
-              const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+          const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
           backgroundColor: Colors.white,
-          title: (userRole == 'Employer')
+          title: (userRole == 'Freelancer')
               ? Text(
-                  'Job You Posted',
-                  style: GoogleFonts.openSans(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                )
+            'Job You Applied',
+            style: GoogleFonts.openSans(
+                fontSize: 20, fontWeight: FontWeight.bold),
+          )
               : Text(
-                  'Job You Applied',
-                  style: GoogleFonts.openSans(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+            'Job You Posted',
+            style: GoogleFonts.openSans(
+                fontSize: 20, fontWeight: FontWeight.bold),
+          ),
           elevation: 2,
         ),
         body: ListView.builder(

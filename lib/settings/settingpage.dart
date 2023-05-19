@@ -6,11 +6,11 @@ import 'package:url_launcher/url_launcher.dart';
 import '../provider/theme_provider.dart';
 import '../screens/Login/login.dart';
 
+
 void settingpage() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
-
 class irem extends StatefulWidget {
   const irem({Key? key}) : super(key: key);
 
@@ -173,10 +173,7 @@ class _SettingPageUIState extends State<SettingPageUI> {
           title: Text("Settings", style: TextStyle(fontSize: 22)),
           leading: IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfileScreen()),
-              );
+              Navigator.pop(context);
             },
             icon: Icon(Icons.arrow_back),
 
