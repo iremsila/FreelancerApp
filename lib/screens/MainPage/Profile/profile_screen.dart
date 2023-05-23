@@ -154,38 +154,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        'About Me',
+                        'Abilities',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 50),
-                  Container(
-                    width: 120,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.blue,
-                    ),
-                    child: Center(
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SettingPageUI()),
-                          );
-                        },
-                        child: Text(
-                          "Settings",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
                         ),
                       ),
                     ),
@@ -194,8 +166,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? TextFormField(
                           controller: _descriptionController,
                           decoration: InputDecoration(
-                            labelText: 'About you',
+                            labelText:
+                                'Enter your abilities about your experience',
                           ),
+                          maxLines: null,
+                          keyboardType: TextInputType.multiline,
                           onChanged: (value) {
                             setState(() {
                               description = value;
@@ -210,6 +185,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                   SizedBox(height: 16),
+                  Container(
+                    width: 120,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.blue,
+                    ),
+                    child: Center(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SettingPageUI()),
+                          );
+                        },
+                        child: Text(
+                          "Settings",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

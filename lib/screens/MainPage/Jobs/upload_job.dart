@@ -262,7 +262,19 @@ class _UploadJobNow extends State<UploadJobNow> {
                   SizedBox(height: 10.0),
                   ElevatedButton(
                     onPressed: () {
-                      _postToDatabase();
+                      if (_formKey.currentState!.validate() &&
+                          selectedOption.isNotEmpty &&
+                          (selectedOption != 'in-person' ||
+                              selectedCountry != null)) {
+                        _postToDatabase();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text('Please fill in all fields correctly'),
+                          ),
+                        );
+                      }
                     },
                     child: Text('Post Job'),
                   )

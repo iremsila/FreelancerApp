@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
 import '../Jobs/job_detail.dart';
+
 class SearchScreen extends StatefulWidget {
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
+
 class _SearchScreenState extends State<SearchScreen> {
   final _searchController = TextEditingController();
   List<Map<String, dynamic>> _searchResults = [];
@@ -36,18 +38,19 @@ class _SearchScreenState extends State<SearchScreen> {
     });
     await conn.close();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         systemOverlayStyle:
-        const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+            const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
         backgroundColor: Colors.white,
         title: Text(
           'Discover & Search',
-          style: GoogleFonts.openSans(
-              fontSize: 20, fontWeight: FontWeight.bold),
+          style:
+              GoogleFonts.openSans(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         elevation: 2,
       ),
@@ -66,6 +69,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 }
               },
               decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search),
                 hintText: 'Search',
               ),
             ),

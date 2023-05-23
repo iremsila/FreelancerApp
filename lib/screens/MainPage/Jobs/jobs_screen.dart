@@ -37,7 +37,8 @@ class _JobScreenState extends State<JobScreen>
 
   Future<List<Map<String, dynamic>>> fetchData() async {
     var conn = await getConnection();
-    var results = await conn.query('SELECT * FROM upload_job1');
+    var results =
+        await conn.query('SELECT * FROM upload_job1 ORDER BY date_posted ASC');
     await conn.close();
     return results.map((resultRow) {
       return Map<String, dynamic>.from(resultRow.fields);

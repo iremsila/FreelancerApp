@@ -28,7 +28,7 @@ class _JobListScreenState extends State<JobListScreen> {
     int userId = prefs.getInt('userId') ?? 0;
     var conn = await getConnection();
     var results = await conn.query(
-      'SELECT freelanceroremployer FROM User WHERE id = ?',
+      'SELECT freelanceroremployer FROM User WHERE id = ? ',
       [userId],
     ); // Kullanıcının kimlik bilgisine göre sorguyu güncelleyin
     await conn.close();
@@ -64,7 +64,7 @@ class _JobListScreenState extends State<JobListScreen> {
     ));
 
     final jobResult = await conn.query(
-      'SELECT * FROM upload_job1 WHERE user_id = ?',
+      'SELECT * FROM upload_job1 WHERE user_id = ? ',
       [userId],
     );
 
@@ -83,19 +83,19 @@ class _JobListScreenState extends State<JobListScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           systemOverlayStyle:
-          const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+              const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
           backgroundColor: Colors.white,
           title: (userRole == 'Freelancer')
               ? Text(
-            'Job You Applied',
-            style: GoogleFonts.openSans(
-                fontSize: 20, fontWeight: FontWeight.bold),
-          )
+                  'Job You Applied',
+                  style: GoogleFonts.openSans(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                )
               : Text(
-            'Job You Posted',
-            style: GoogleFonts.openSans(
-                fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+                  'Job You Posted',
+                  style: GoogleFonts.openSans(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ),
           elevation: 2,
         ),
         body: ListView.builder(
