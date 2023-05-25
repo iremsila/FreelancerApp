@@ -15,9 +15,9 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String nameandsurname = '';
   String email = '';
-  String description = '';
+  String abilities = '';
 
-  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _abilitiesController = TextEditingController();
 
   bool _isEditing = false;
 
@@ -40,23 +40,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ));
 
     // Kullanıcının profil bilgilerini sorgulayın
-    final results = await conn.query(
+    final userResults = await conn.query(
       'SELECT nameandsurname, email FROM User WHERE id = ?',
       [userId],
     );
 
-    final resultD = await conn.query(
-      'SELECT about_me FROM profile WHERE id= ?',
+    if (userResults.isNotEmpty) {
+      final userRow = userResults.first;
+      setState(() {
+        nameandsurname = userRow['nameandsurname'];
+        email = userRow['email'];
+      });
+    }
+
+    // Kullanıcının abilities bilgisini sorgulayın
+    final profileResults = await conn.query(
+      'SELECT abilities FROM profile WHERE user_id = ?',
       [userId],
     );
 
-    if (results.isNotEmpty) {
-      final row = results.first;
+    if (profileResults.isNotEmpty) {
+      final profileRow = profileResults.first;
       setState(() {
-        nameandsurname = row['nameandsurname'];
-        email = row['email'];
-
-        _descriptionController.text = description;
+        var abilitiesBlob = profileRow['abilities'];
+        abilities = abilitiesBlob.toString(); // Blob veriyi String'e dönüştür
+        _abilitiesController.text = abilities;
       });
     }
 
@@ -64,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await conn.close();
   }
 
-  Future<void> updateDescription() async {
+  Future<void> updateAbilities() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int userId = prefs.getInt('userId') ?? 0;
     final conn = await MySqlConnection.connect(ConnectionSettings(
@@ -75,10 +83,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
       db: 'httpdegm_database1',
     ));
 
-    await conn.query(
-      'UPDATE profile SET about_me = ? WHERE id = ?',
-      [_descriptionController.text, userId],
+    // Öncelikle, kullanıcının abilities bilgisinin mevcut olup olmadığını kontrol edin
+    final abilitiesCheckResults = await conn.query(
+      'SELECT COUNT(*) as count FROM profile WHERE user_id = ?',
+      [userId],
     );
+
+    if (abilitiesCheckResults.isNotEmpty) {
+      final countRow = abilitiesCheckResults.first;
+      int count = countRow['count'];
+
+      if (count == 0) {
+        // Kayıt bulunmadığı için INSERT işlemi yapın
+        await conn.query(
+          'INSERT INTO profile (user_id, abilities) VALUES (?, ?)',
+          [userId, _abilitiesController.text],
+        );
+      } else {
+        // Kayıt bulunduğu için UPDATE işlemi yapın
+        await conn.query(
+          'UPDATE profile SET abilities = ? WHERE user_id = ?',
+          [_abilitiesController.text, userId],
+        );
+      }
+
+      setState(() {
+        abilities = _abilitiesController.text;
+      });
+    }
 
     await conn.close();
   }
@@ -164,23 +196,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   _isEditing
                       ? TextFormField(
-                          controller: _descriptionController,
+                          controller: _abilitiesController,
                           decoration: InputDecoration(
-                            labelText:
-                                'Enter your abilities about your experience',
+                            labelText: 'Enter your abilities',
                           ),
                           maxLines: null,
                           keyboardType: TextInputType.multiline,
-                          onChanged: (value) {
-                            setState(() {
-                              description = value;
-                            });
-                          },
                         )
                       : Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
-                            description,
+                            abilities,
                             style: TextStyle(fontSize: 16),
                           ),
                         ),
@@ -220,11 +246,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             top: 8,
             right: 8,
             child: TextButton(
-              onPressed: () {
+              onPressed: () async {
+                if (_isEditing) {
+                  await updateAbilities();
+                }
                 setState(() {
-                  if (_isEditing) {
-                    updateDescription();
-                  }
                   _isEditing = !_isEditing;
                 });
               },
