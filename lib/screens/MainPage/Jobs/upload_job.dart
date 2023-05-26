@@ -13,10 +13,10 @@ class _UploadJobNow extends State<UploadJobNow> {
   final _formKey = GlobalKey<FormState>();
   DateTime? selectedDate; // Nullable olarak güncellendi
   String? selectedCountry; // Seçilen ülke
+  String? selectedCategory; // Seçilen kategori
   MySqlConnection? conn;
 
   TextEditingController jobTitleController = TextEditingController();
-  TextEditingController categoryController = TextEditingController();
   TextEditingController jobDescriptionController = TextEditingController();
   TextEditingController budgetController = TextEditingController();
   TextEditingController dateController = TextEditingController();
@@ -35,6 +35,19 @@ class _UploadJobNow extends State<UploadJobNow> {
     'Spain',
     'The U.S.A',
     'Türkiye',
+  ];
+
+  final List<String> categories = [
+    'Web Design',
+    'Graphic Design',
+    'Software Development',
+    'Mobile App Development',
+    'Digital Marketing',
+    'Content Writing',
+    'Translation',
+    'Data Entry',
+    'Voiceover',
+    'Video Editing',
   ];
 
   Future<void> _selectDate(BuildContext context) async {
@@ -67,7 +80,6 @@ class _UploadJobNow extends State<UploadJobNow> {
     conn = await MySqlConnection.connect(settings);
 
     String jobTitle = jobTitleController.text;
-    String category = categoryController.text;
     String jobDescription = jobDescriptionController.text;
     String? country = selectedOption == 'remote' ? 'Remote' : selectedCountry;
     String budget = budgetController.text;
@@ -75,14 +87,21 @@ class _UploadJobNow extends State<UploadJobNow> {
 
     await conn!.query(
       'INSERT INTO upload_job1 (user_id, job_title, category, location, description, budget, date_posted) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [userId, jobTitle, category, country, jobDescription, budget, date],
+      [
+        userId,
+        jobTitle,
+        selectedCategory,
+        country,
+        jobDescription,
+        budget,
+        date
+      ],
     );
 
     // Veritabanı bağlantısını kapatın
     await conn!.close();
 
     jobTitleController.clear();
-    categoryController.clear();
     jobDescriptionController.clear();
     budgetController.clear();
     dateController.clear();
@@ -90,6 +109,7 @@ class _UploadJobNow extends State<UploadJobNow> {
       selectedDate = null;
       selectedCountry = null;
       selectedOption = '';
+      selectedCategory = null;
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -147,18 +167,26 @@ class _UploadJobNow extends State<UploadJobNow> {
                     controller: jobTitleController,
                   ),
                   SizedBox(height: 16.0),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Category',
-                      border: OutlineInputBorder(),
-                    ),
+                  DropdownButtonFormField<String>(
+                    value: selectedCategory,
+                    hint: Text('Select a Category'),
+                    onChanged: (String? value) {
+                      setState(() {
+                        selectedCategory = value;
+                      });
+                    },
                     validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter a category';
+                      if (value == null) {
+                        return 'Please select a category';
                       }
                       return null;
                     },
-                    controller: categoryController,
+                    items: categories.map((String category) {
+                      return DropdownMenuItem<String>(
+                        value: category,
+                        child: Text(category),
+                      );
+                    }).toList(),
                   ),
                   SizedBox(height: 16.0),
                   TextFormField(
@@ -209,7 +237,7 @@ class _UploadJobNow extends State<UploadJobNow> {
                   if (selectedOption == 'in-person')
                     DropdownButton<String>(
                       value: selectedCountry,
-                      hint: Text('Selecet a Country'),
+                      hint: Text('Select a Country'),
                       onChanged: (String? value) {
                         setState(() {
                           selectedCountry = value;
@@ -265,7 +293,8 @@ class _UploadJobNow extends State<UploadJobNow> {
                       if (_formKey.currentState!.validate() &&
                           selectedOption.isNotEmpty &&
                           (selectedOption != 'in-person' ||
-                              selectedCountry != null)) {
+                              selectedCountry != null) &&
+                          selectedCategory != null) {
                         _postToDatabase();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
