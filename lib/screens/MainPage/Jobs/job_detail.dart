@@ -1,14 +1,52 @@
 import 'dart:ui';
-import 'package:WorkWise/screens/MainPage/Jobs/posted_job.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:mysql1/mysql1.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constans/colors.dart';
 
 class JobDetailPage extends StatelessWidget {
   final Map<String, dynamic> jobData;
 
   JobDetailPage(this.jobData);
+
+  Future<MySqlConnection> getConnection() async {
+    final settings = ConnectionSettings(
+      host: '213.238.183.81',
+      port: 3306,
+      user: 'httpdegm_hudai',
+      password: ',sPE[gd^hbl1',
+      db: 'httpdegm_database1',
+    );
+
+    return await MySqlConnection.connect(settings);
+
+  }
+
+  Future<void> applyJob(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt('userId') ?? 0;
+    final conn = await getConnection();
+
+    try {
+      await conn.query(
+        'INSERT INTO job_applications (freelancer_id, job_id) VALUES (?, ?)',
+        [userId, jobData['id']],
+      );
+
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Başvurunuz başarıyla tamamlandı!'),
+        ),
+      );
+    } catch (e) {
+      print('Başvuru yapılırken bir hata oluştu: $e');
+    } finally {
+      await conn.close();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +87,7 @@ class JobDetailPage extends StatelessWidget {
                 height: 55,
                 width: 55,
                 decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(25)),
+                BoxDecoration(borderRadius: BorderRadius.circular(25)),
                 child: Icon(
                   Icons.arrow_back_ios,
                   size: 20,
@@ -103,7 +141,7 @@ class JobDetailPage extends StatelessWidget {
                 Text(
                   jobData['location'],
                   style:
-                      GoogleFonts.openSans(fontSize: 15, color: SecondaryText),
+                  GoogleFonts.openSans(fontSize: 15, color: SecondaryText),
                 ),
                 const SizedBox(
                   height: 15,
@@ -181,7 +219,9 @@ class JobDetailPage extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    applyJob(context);
+                  },
                   child: Text(
                     "Apply",
                     style: GoogleFonts.openSans(

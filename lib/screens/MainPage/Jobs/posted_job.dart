@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'job_detail.dart';
+
 class JobListScreen extends StatefulWidget {
   @override
   _JobListScreenState createState() => _JobListScreenState();
@@ -12,34 +14,17 @@ class JobListScreen extends StatefulWidget {
 class _JobListScreenState extends State<JobListScreen> {
   List<Map<String, dynamic>> jobList = [];
   String userRole = '';
+
   @override
   void initState() {
     super.initState();
     fetchUserRole().then((role) {
       setState(() {
         userRole = role;
+        fetchDataFromDatabase();
       });
     });
-    fetchDataFromDatabase();
   }
-
-  Future<String> fetchUserRole() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int userId = prefs.getInt('userId') ?? 0;
-    var conn = await getConnection();
-    var results = await conn.query(
-      'SELECT freelanceroremployer FROM User WHERE id = ? ',
-      [userId],
-    ); // Kullanıcının kimlik bilgisine göre sorguyu güncelleyin
-    await conn.close();
-    if (results.isNotEmpty) {
-      var row = results.first;
-      return row['freelanceroremployer'];
-    } else {
-      return ''; // Varsayılan rol değeri, eğer kullanıcının rolü bulunamazsa
-    }
-  }
-
   Future<MySqlConnection> getConnection() async {
     final settings = new ConnectionSettings(
       host: '213.238.183.81',
@@ -51,110 +36,94 @@ class _JobListScreenState extends State<JobListScreen> {
     return await MySqlConnection.connect(settings);
   }
 
+  Future<String> fetchUserRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt('userId') ?? 0;
+    var conn = await getConnection();
+    var results = await conn.query(
+      'SELECT freelanceroremployer FROM User WHERE id = ?',
+      [userId],
+    );
+    await conn.close();
+    if (results.isNotEmpty) {
+      var row = results.first;
+      return row['freelanceroremployer'];
+    } else {
+      return '';
+    }
+  }
+
   Future<void> fetchDataFromDatabase() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int userId = prefs.getInt('userId') ?? 0;
+    var conn = await getConnection();
 
-    final conn = await MySqlConnection.connect(ConnectionSettings(
-      host: '213.238.183.81',
-      port: 3306,
-      user: 'httpdegm_hudai',
-      password: ',sPE[gd^hbl1',
-      db: 'httpdegm_database1',
-    ));
+    String query = '';
 
-    final jobResult = await conn.query(
-      'SELECT * FROM upload_job1 WHERE user_id = ? ',
-      [userId],
-    );
-
-    if (jobResult.isNotEmpty) {
-      setState(() {
-        jobList = jobResult.map((row) => row.fields).toList();
-      });
+    if (userRole == 'Freelancer') {
+      query =
+      'SELECT j.* FROM job_applications ja INNER JOIN upload_job1 j ON ja.job_id = j.id WHERE ja.freelancer_id = ?';
+    } else if (userRole == 'Employer') {
+      query = 'SELECT * FROM upload_job1 WHERE user_id = ?';
+    } else {
+      // Diğer durumlar için bir hata durumu veya varsayılan sorgu belirleyebilirsiniz
+      // Örneğin:
+      throw Exception('Geçersiz kullanıcı rolü: $userRole');
+      // veya:
+      query = '';
     }
-
+    if (query.isNotEmpty) {
+      final jobResult = await conn.query(query, [userId]);
+      if (jobResult.isNotEmpty) {
+        setState(() {
+          jobList = jobResult.map((row) => row.fields).toList();
+        });
+      }
+    }
     await conn.close();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          systemOverlayStyle:
-              const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
-          backgroundColor: Colors.white,
-          title: (userRole == 'Freelancer')
-              ? Text(
-                  'Job You Applied',
-                  style: GoogleFonts.openSans(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                )
-              : Text(
-                  'Job You Posted',
-                  style: GoogleFonts.openSans(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-          elevation: 2,
-        ),
-        body: ListView.builder(
-          itemCount: jobList.length,
-          itemBuilder: (context, index) {
-            final job = jobList[index];
-            if (userRole == 'Employer') {
-              return ListTile(
-                title: Text(job['job_title']),
-                subtitle: Text(job['category']),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => JobDetailScreen(job: job),
-                    ),
-                  );
-                },
-              );
-            } else {
-              return ListTile();
-            }
-          },
-        ));
-  }
-}
+    String title = '';
+    if (userRole == 'Employer') {
+      title = 'Jobs You Posted';
+    } else {
+      title = 'Jobs You Applied';
+    }
 
-class JobDetailScreen extends StatelessWidget {
-  final Map<String, dynamic> job;
-
-  const JobDetailScreen({required this.job});
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Job Detail'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Job Title: ${job['job_title']}',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8.0),
-            Text('Category: ${job['category']}'),
-            SizedBox(height: 8.0),
-            Text('Location: ${job['location']}'),
-            SizedBox(height: 8.0),
-            Text('Description: ${job['description']}'),
-            SizedBox(height: 8.0),
-            Text('Budget: ${job['budget']}'),
-            SizedBox(height: 8.0),
-            Text('Date Posted: ${job['date_posted']}'),
-          ],
+        automaticallyImplyLeading: false,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
         ),
+        backgroundColor: Colors.white,
+        title: Text(
+          title,
+          style: GoogleFonts.openSans(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        elevation: 2,
+      ),
+      body: ListView.builder(
+        itemCount: jobList.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(jobList[index]['job_title']),
+            subtitle: Text(jobList[index]['category']),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => JobDetailPage(jobList[index]),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
