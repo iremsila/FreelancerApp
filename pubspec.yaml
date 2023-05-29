@@ -50,7 +50,6 @@ dependencies:
   shared_preferences: ^2.1.1
   url_launcher: ^6.1.11
   settings_ui: ^2.0.2
-  device_preview: ^1.1.0
   mailer: ^6.0.1
 
 

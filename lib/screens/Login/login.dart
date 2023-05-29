@@ -5,7 +5,7 @@ import 'package:mysql1/mysql1.dart' as mysql;
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../MainPage/main_page.dart';
-import '../forgot_password.dart';
+import 'forgot_password.dart';
 import '../register/register.dart';
 
 class LoginPage extends StatefulWidget {
