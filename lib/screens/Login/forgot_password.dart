@@ -26,6 +26,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   @override
+  void dispose() {
+    _connection?.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -208,7 +214,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     if (await _checkTokenFromDatabase(email, _resetToken)) {
       // Şifre sıfırlama işlemleri
       // newPassword'i veritabanına kaydedin
-      await _updatePassword(email, newPassword);
 
       showDialog(
         context: context,
@@ -247,13 +252,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         },
       );
     }
-  }
-
-  Future<void> _updatePassword(String email, String newPassword) async {
-    await _connection?.query(
-      'UPDATE User SET password = ? WHERE email = ?',
-      [newPassword, email],
-    );
   }
 
   String _generateToken() {
