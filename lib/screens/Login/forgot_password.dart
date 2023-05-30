@@ -210,11 +210,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       );
       return;
     }
+    Future<void> _updatePassword(String email, String newPassword) async {
+      await _connection?.query(
+        'UPDATE User SET password = ? WHERE email = ?',
+        [newPassword, email],
+      );
+    }
 
     if (await _checkTokenFromDatabase(email, _resetToken)) {
-      // Şifre sıfırlama işlemleri
-      // newPassword'i veritabanına kaydedin
-
+      await _updatePassword(email, newPassword);
       showDialog(
         context: context,
         builder: (BuildContext context) {
