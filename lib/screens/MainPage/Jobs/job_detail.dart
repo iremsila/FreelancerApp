@@ -89,8 +89,13 @@ class JobDetailPage extends StatelessWidget {
       );
 
       await conn.query(
-        'UPDATE jobs SET application_count = application_count + 1 WHERE id = ?',
+        'UPDATE upload_job1 SET application_count = application_count + 1 WHERE id = ?',
         [jobData['id']],
+      );
+
+      await conn.query(
+        'INSERT INTO notifications (user_id, job_id, is_read, employer_id) VALUES (?, ?, ?, ?)',
+        [userId, jobData['id'], 0, jobData['user_id']],
       );
 
       final scaffoldMessenger = ScaffoldMessenger.of(context);
