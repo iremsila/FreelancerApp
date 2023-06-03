@@ -51,6 +51,7 @@ dependencies:
   url_launcher: ^6.1.11
   settings_ui: ^2.0.2
   mailer: ^6.0.1
+  flutter_svg: ^0.22.0
 
 
 dev_dependencies:

@@ -35,8 +35,8 @@ class _LoginPageState extends State<LoginPage>
   final settings = mysql.ConnectionSettings(
     host: '213.238.183.81',
     port: 3306,
-    user: 'httpdegm_melike',
-    password: 'A}c74e&QAI[x',
+    user: 'httpdegm_hudai',
+    password: ',sPE[gd^hbl1',
     db: 'httpdegm_database1',
   );
 

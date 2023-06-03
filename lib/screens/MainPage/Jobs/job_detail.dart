@@ -19,9 +19,7 @@ class JobDetailPage extends StatelessWidget {
       password: ',sPE[gd^hbl1',
       db: 'httpdegm_database1',
     );
-
     return await MySqlConnection.connect(settings);
-
   }
 
   Future<void> applyJob(BuildContext context) async {
@@ -30,9 +28,69 @@ class JobDetailPage extends StatelessWidget {
     final conn = await getConnection();
 
     try {
+      // Kullanıcının işveren olarak kayıtlı olup olmadığını kontrol et
+      final results = await conn.query(
+        'SELECT * FROM User WHERE id = ? AND freelanceroremployer = "Employer"',
+        [userId],
+      );
+
+      if (results.isNotEmpty) {
+        // Kullanıcı işveren, apply tuşunu görünmez yap
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Error'),
+            content: Text('Employers cannot apply!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Okay'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+
+      // Kullanıcı işçi, başvuru işlemini gerçekleştir
+
+      // Kullanıcının aynı işe başvurup başvurmadığını kontrol et
+      final applicationResults = await conn.query(
+        'SELECT * FROM job_applications WHERE freelancer_id = ? AND job_id = ?',
+        [userId, jobData['id']],
+      );
+
+      if (applicationResults.isNotEmpty) {
+        // Kullanıcı zaten bu işe başvurmuş
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Error'),
+            content: Text('You have already applied for this job!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Okay'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+
+      // Başvuru kaydını ekle
       await conn.query(
         'INSERT INTO job_applications (freelancer_id, job_id) VALUES (?, ?)',
         [userId, jobData['id']],
+      );
+
+      await conn.query(
+        'UPDATE jobs SET application_count = application_count + 1 WHERE id = ?',
+        [jobData['id']],
       );
 
       final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -87,7 +145,7 @@ class JobDetailPage extends StatelessWidget {
                 height: 55,
                 width: 55,
                 decoration:
-                BoxDecoration(borderRadius: BorderRadius.circular(25)),
+                    BoxDecoration(borderRadius: BorderRadius.circular(25)),
                 child: Icon(
                   Icons.arrow_back_ios,
                   size: 20,
@@ -141,7 +199,7 @@ class JobDetailPage extends StatelessWidget {
                 Text(
                   jobData['location'],
                   style:
-                  GoogleFonts.openSans(fontSize: 15, color: SecondaryText),
+                      GoogleFonts.openSans(fontSize: 15, color: SecondaryText),
                 ),
                 const SizedBox(
                   height: 15,
@@ -200,13 +258,34 @@ class JobDetailPage extends StatelessWidget {
                     height: 4,
                   ),
                 ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "Budget",
-                    style: GoogleFonts.openSans(
-                        fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
+                Row(
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Budget",
+                        style: GoogleFonts.openSans(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Spacer(),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.people,
+                          size: 30,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          jobData['application_count'] != null
+                              ? "${jobData['application_count']}"
+                              : "0",
+                          style: GoogleFonts.openSans(
+                              fontSize: 20, color: SecondaryText),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 10,

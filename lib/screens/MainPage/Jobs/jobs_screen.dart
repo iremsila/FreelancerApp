@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import '../Category/category_list.dart';
 import 'job_detail.dart';
 
 class JobScreen extends StatefulWidget {
@@ -75,19 +75,19 @@ class _JobScreenState extends State<JobScreen>
 
   List<CardItem> items = [
     CardItem(
-      urlImage: 'assets/images/AI.jpg',
-      title: 'AI Artist',
+      urlImage: 'assets/images/mobile_development.png',
+      title: 'Mobile App Development',
     ),
     CardItem(
-      urlImage: 'assets/images/logo.webp',
-      title: 'Logo Design',
+      urlImage: 'assets/images/content-writing.png',
+      title: 'Content Writing',
     ),
     CardItem(
-      urlImage: 'assets/images/software.jpg',
+      urlImage: 'assets/images/software_development.png',
       title: 'Software Development',
     ),
     CardItem(
-      urlImage: 'assets/images/video_editing.webp',
+      urlImage: 'assets/images/montage.png',
       title: 'Video Editing',
     ),
   ];
@@ -143,12 +143,51 @@ class _JobScreenState extends State<JobScreen>
           const SizedBox(height: 30),
           Row(
             children: [
+              SizedBox(width: 16), // Başlangıçtan boşluk ekledik
               Text(
-                "  Popular Services",
+                "Popular Services",
                 textAlign: TextAlign.start,
                 style: GoogleFonts.openSans(
-                    fontSize: 25, fontWeight: FontWeight.bold),
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CategoriesPage()),
+                      );
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "See All",
+                          style: GoogleFonts.openSans(
+                            fontSize: 16, // See All metni daha küçük
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Icon(Icons.arrow_forward_ios, size: 16),
+                        // Okun boyutunu küçülttük
+                      ],
+                    ),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blue,
+                      padding: EdgeInsets.zero,
+                      // Buton kenar boşlukları
+                      tapTargetSize:
+                          MaterialTapTargetSize.shrinkWrap, // Buton boyutu
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 16), // Sondan boşluk ekledik
             ],
           ),
           const SizedBox(height: 10),
@@ -159,7 +198,7 @@ class _JobScreenState extends State<JobScreen>
               scrollDirection: Axis.horizontal,
               itemCount: 4,
               separatorBuilder: (context, _) => const SizedBox(width: 5),
-              itemBuilder: (context, index) => buildCard(item: items[index]),
+              itemBuilder: (context, index) => _categories(item: items[index]),
             ),
           ),
           const SizedBox(height: 10),
@@ -180,7 +219,7 @@ class _JobScreenState extends State<JobScreen>
                 return Container(
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Color(0xfffafbfd),
                     borderRadius: BorderRadius.circular(13),
                     boxShadow: [
                       BoxShadow(
@@ -243,37 +282,36 @@ class _JobScreenState extends State<JobScreen>
     );
   }
 
-  Widget buildCard({
+  Widget _categories({
     required CardItem item,
   }) =>
-      Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(color: Colors.blue),
-          borderRadius: BorderRadius.circular(20),
+      Container(
+        height: 60,
+        width: 120,
+        decoration: BoxDecoration(
+          color: Color(0xfffafbfd),
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            width: 130,
-            color: Colors.white,
-            child: Column(
-              children: [
-                Expanded(
-                  child: AspectRatio(
-                      aspectRatio: 4 / 2,
-                      child: Image.asset(
-                        item.urlImage,
-                        fit: BoxFit.cover,
-                      )),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                  height: 50,
+                  width: 50,
+                  child: Image.asset(
+                    item.urlImage,
+                  )),
+              Text(
+                item.title,
+                textAlign: TextAlign.center,
+                // Metni ortalamak için textAlign özelliğini ekledik
+                style: GoogleFonts.openSans(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 8),
-                Text(item.title,
-                    style: GoogleFonts.openSans(
-                        fontSize: 10, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );

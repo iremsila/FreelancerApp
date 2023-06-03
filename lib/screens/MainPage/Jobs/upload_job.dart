@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:intl/intl.dart';
-import 'package:progress_state_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UploadJobNow extends StatefulWidget {
@@ -77,13 +76,13 @@ class _UploadJobNow extends State<UploadJobNow> {
       db: 'httpdegm_database1',
     );
 
-    conn = await MySqlConnection.connect(settings);
-
     String jobTitle = jobTitleController.text;
     String jobDescription = jobDescriptionController.text;
     String? country = selectedOption == 'remote' ? 'Remote' : selectedCountry;
     String budget = budgetController.text;
     String date = DateFormat('yyyy-MM-dd').format(selectedDate!);
+
+    conn = await MySqlConnection.connect(settings);
 
     await conn!.query(
       'INSERT INTO upload_job1 (user_id, job_title, category, location, description, budget, date_posted) VALUES (?, ?, ?, ?, ?, ?, ?)',

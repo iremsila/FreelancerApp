@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import '../Category/category_jobs.dart';
 import 'job_detail.dart';
 
 class JobListScreen extends StatefulWidget {
@@ -25,6 +25,7 @@ class _JobListScreenState extends State<JobListScreen> {
       });
     });
   }
+
   Future<MySqlConnection> getConnection() async {
     final settings = new ConnectionSettings(
       host: '213.238.183.81',
@@ -62,7 +63,7 @@ class _JobListScreenState extends State<JobListScreen> {
 
     if (userRole == 'Freelancer') {
       query =
-      'SELECT j.* FROM job_applications ja INNER JOIN upload_job1 j ON ja.job_id = j.id WHERE ja.freelancer_id = ?';
+          'SELECT j.* FROM job_applications ja INNER JOIN upload_job1 j ON ja.job_id = j.id WHERE ja.freelancer_id = ?';
     } else if (userRole == 'Employer') {
       query = 'SELECT * FROM upload_job1 WHERE user_id = ?';
     } else {
@@ -70,7 +71,6 @@ class _JobListScreenState extends State<JobListScreen> {
       // Örneğin:
       throw Exception('Geçersiz kullanıcı rolü: $userRole');
       // veya:
-      query = '';
     }
     if (query.isNotEmpty) {
       final jobResult = await conn.query(query, [userId]);
@@ -111,17 +111,17 @@ class _JobListScreenState extends State<JobListScreen> {
       body: ListView.builder(
         itemCount: jobList.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(jobList[index]['job_title']),
-            subtitle: Text(jobList[index]['category']),
+          final job = jobList[index];
+          return GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => JobDetailPage(jobList[index]),
+                  builder: (context) => JobDetailPage(job),
                 ),
               );
             },
+            child: JobCard(job: job),
           );
         },
       ),
