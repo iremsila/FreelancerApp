@@ -48,7 +48,7 @@ class _MainPageState extends State<MainPage> {
     int userId = prefs.getInt('userId') ?? 0;
     var conn = await getConnection();
     var results = await conn.query(
-      'SELECT id FROM notifications WHERE employer_id = ? AND is_read = 0',
+      'SELECT id FROM notifications WHERE receiver_id = ? AND is_read = 0',
       [userId],
     );
     await conn.close();

@@ -116,11 +116,11 @@ class JobDetailPage extends StatelessWidget {
       final scaffoldMessenger = ScaffoldMessenger.of(context);
       scaffoldMessenger.showSnackBar(
         SnackBar(
-          content: Text('Başvurunuz başarıyla tamamlandı!'),
+          content: Text('Your application has been successfully completed!'),
         ),
       );
     } catch (e) {
-      print('Başvuru yapılırken bir hata oluştu: $e');
+      print('An error occurred during the application: $e');
     } finally {
       await conn.close();
     }

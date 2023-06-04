@@ -88,7 +88,7 @@ class _JobListScreenState extends State<JobListScreen> {
     String title = '';
     if (userRole == 'Employer') {
       title = 'Jobs You Posted';
-    } else {
+    } else if (userRole == 'Freelancer') {
       title = 'Jobs You Applied';
     }
 

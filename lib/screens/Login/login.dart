@@ -296,9 +296,11 @@ class _LoginPageState extends State<LoginPage>
                                 );
                               },
                               child: Text(
-                                "Register now",
+                                "Register now.",
                                 style: TextStyle(
-                                    fontSize: 15, color: Colors.blue.shade900),
+                                    fontSize: 15,
+                                    color: Colors.blue.shade900,
+                                    fontWeight: FontWeight.bold),
                               )),
                         ],
                       ),

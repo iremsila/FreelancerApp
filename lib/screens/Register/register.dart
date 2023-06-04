@@ -1,3 +1,4 @@
+import 'package:WorkWise/screens/MainPage/main_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -88,10 +89,7 @@ class _RegisterPageState extends State<RegisterPage>
   );
 
   Future<void> register() async {
-    // MySQL bağlantısı
     final connect = await mysql.MySqlConnection.connect(settings);
-
-    // Kayıt ekleme
     await connect.query(
         '''INSERT INTO User (nameandsurname, age, email, password, freelanceroremployer) VALUES (?, ?, ?, ?,?)''',
         [
@@ -102,8 +100,6 @@ class _RegisterPageState extends State<RegisterPage>
           _selectedOption
         ]);
     await connect.close();
-
-    // Başarılı bildirimi
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('You have successfully registered!'),
@@ -400,8 +396,15 @@ class _RegisterPageState extends State<RegisterPage>
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 25),
                       child: GestureDetector(
-                        onTap: () {
-                          register();
+                        onTap: () async {
+                          bool isRegistered = register() as bool;
+                          if (isRegistered) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const MainPage()),
+                            );
+                          }
                         },
                         child: Container(
                           padding: EdgeInsets.all(12),

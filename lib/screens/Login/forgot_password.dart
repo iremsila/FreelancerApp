@@ -101,7 +101,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   void _sendResetEmail() async {
     String email = _emailController.text;
 
-    // E-posta adresinin kullanıcı tablosunda mevcut olup olmadığını kontrol et
     if (!await _checkEmailExists(email)) {
       showDialog(
         context: context,
@@ -189,7 +188,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     String email = _emailController.text;
     String newPassword = _newPasswordController.text;
 
-    // E-posta adresinin kullanıcı tablosunda mevcut olup olmadığını kontrol et
     if (!await _checkEmailExists(email)) {
       showDialog(
         context: context,
@@ -229,7 +227,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  // Ana sayfaya yönlendirme işlemleri
                 },
                 child: Text('OK'),
               ),
@@ -299,7 +296,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       'SELECT * FROM User WHERE email = ?',
       [email],
     );
-
     return result!.isNotEmpty;
   }
 }
