@@ -2,10 +2,11 @@ import 'package:WorkWise/screens/MainPage/Jobs/upload_job.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../Category/category_jobs.dart';
 import '../Category/category_list.dart';
+import 'job_card_2.dart';
 import 'job_detail.dart';
 
 class JobScreen extends StatefulWidget {
@@ -216,63 +217,17 @@ class _JobScreenState extends State<JobScreen>
             child: ListView.builder(
               itemCount: jobs.length,
               itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: Color(0xfffafbfd),
-                    borderRadius: BorderRadius.circular(13),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade200,
-                        blurRadius: 10,
-                        spreadRadius: 3,
-                        offset: Offset(3, 4),
-                      )
-                    ],
-                  ),
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => JobDetailPage(jobs[index]),
-                        ),
-                      );
-                    },
-                    leading: CircleAvatar(
-                      radius: 40,
-                      backgroundColor: Colors.grey,
-                    ),
-                    title: Text(
-                      jobs[index]['job_title'],
-                      style: GoogleFonts.openSans(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(jobs[index]['location'],
-                            style: GoogleFonts.openSans()),
-                        SizedBox(height: 20), // İki metin arasına boşluk ekler
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '\$${jobs[index]['budget']}',
-                              style: GoogleFonts.openSans(),
-                            ),
-                            Text(
-                              DateFormat('yyyy-MM-dd').format(
-                                jobs[index]['date_posted'],
-                              ),
-                              style: GoogleFonts.openSans(),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                final job = jobs[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => JobDetailPage(job),
+                      ),
+                    );
+                  },
+                  child: JobCard2(job: job),
                 );
               },
             ),
@@ -285,33 +240,42 @@ class _JobScreenState extends State<JobScreen>
   Widget _categories({
     required CardItem item,
   }) =>
-      Container(
-        height: 60,
-        width: 120,
-        decoration: BoxDecoration(
-          color: Color(0xfffafbfd),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                  height: 50,
-                  width: 50,
-                  child: Image.asset(
-                    item.urlImage,
-                  )),
-              Text(
-                item.title,
-                textAlign: TextAlign.center,
-                // Metni ortalamak için textAlign özelliğini ekledik
-                style: GoogleFonts.openSans(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
+      GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CategoryJobsPage(category: item.title),
+              ));
+        },
+        child: Container(
+          height: 60,
+          width: 120,
+          decoration: BoxDecoration(
+            color: Color(0xfffafbfd),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                    height: 50,
+                    width: 50,
+                    child: Image.asset(
+                      item.urlImage,
+                    )),
+                Text(
+                  item.title,
+                  textAlign: TextAlign.center,
+                  // Metni ortalamak için textAlign özelliğini ekledik
+                  style: GoogleFonts.openSans(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );

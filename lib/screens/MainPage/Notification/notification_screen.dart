@@ -59,16 +59,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
     int userId = prefs.getInt('userId') ?? 0;
     var conn = await getConnection();
     var results = await conn.query(
-      'SELECT upload_job1.job_title, notifications.id, notifications.is_read FROM notifications JOIN upload_job1 ON upload_job1.id = notifications.job_id WHERE notifications.employer_id = ?',
+      'SELECT notifications.id, notifications.message, notifications.is_read, upload_job1.job_title FROM notifications JOIN upload_job1 ON upload_job1.id = notifications.job_id WHERE notifications.receiver_id = ?',
       [userId],
     );
     await conn.close();
 
     final newNotifications = results.map((row) {
-      final jobTitle = row['job_title'] as String;
-      final message = 'A user applied for $jobTitle job';
+      final message = row['message'] as String;
       final notificationId = row['id'] as int;
-      final isRead = row['is_read'] as int == 1; // Kontrol edilen kısım
+      final isRead = row['is_read'] as int == 1;
+
       return {
         'id': notificationId,
         'message': message,
@@ -90,7 +90,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
     await conn.close();
 
     setState(() {
-      notifications.removeWhere((notification) => notification['id'] == notificationId);
+      notifications
+          .removeWhere((notification) => notification['id'] == notificationId);
     });
   }
 
@@ -162,10 +163,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
             },
             child: ListTile(
               title: Text(notification['message']),
-              tileColor: isRead ? Colors.grey.shade400 : Colors.greenAccent.shade200,
-              onTap: isRead ? null : () {
-                markNotificationAsRead(notification['id']);
-              },
+              tileColor:
+                  isRead ? Colors.grey.shade400 : Colors.greenAccent.shade200,
+              onTap: isRead
+                  ? null
+                  : () {
+                      markNotificationAsRead(notification['id']);
+                    },
             ),
           );
         },

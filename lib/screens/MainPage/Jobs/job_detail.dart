@@ -22,6 +22,19 @@ class JobDetailPage extends StatelessWidget {
     return await MySqlConnection.connect(settings);
   }
 
+  Future<String> getApplicantName(int userId, MySqlConnection conn) async {
+    final result = await conn.query(
+      'SELECT nameandsurname FROM User WHERE id = ?',
+      [userId],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first['nameandsurname'];
+    } else {
+      return 'Unknown'; // Default name if user is not found
+    }
+  }
+
   Future<void> applyJob(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int userId = prefs.getInt('userId') ?? 0;
@@ -92,10 +105,12 @@ class JobDetailPage extends StatelessWidget {
         'UPDATE upload_job1 SET application_count = application_count + 1 WHERE id = ?',
         [jobData['id']],
       );
-
+      String applicantName = await getApplicantName(userId, conn);
+      String jobTitle = jobData['job_title'];
+      String message = '$applicantName has applied for $jobTitle';
       await conn.query(
-        'INSERT INTO notifications (user_id, job_id, is_read, employer_id) VALUES (?, ?, ?, ?)',
-        [userId, jobData['id'], 0, jobData['user_id']],
+        'INSERT INTO notifications (sender_id, job_id, is_read, receiver_id, message) VALUES (?, ?, ?, ?, ?)',
+        [userId, jobData['id'], 0, jobData['user_id'], message],
       );
 
       final scaffoldMessenger = ScaffoldMessenger.of(context);

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Category/category_jobs.dart';
+import 'job_card.dart';
 import 'job_detail.dart';
 
 class JobListScreen extends StatefulWidget {
