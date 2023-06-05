@@ -1,11 +1,11 @@
 import 'package:WorkWise/screens/MainPage/main_page.dart';
-import 'package:WorkWise/screens/onboarding_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
 
 import '../Login/login.dart';
+import '../onboarding_screen.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -397,7 +397,8 @@ class _RegisterPageState extends State<RegisterPage>
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 25),
                       child: GestureDetector(
-                        onTap: () {
+                        onTap: () async {
+                          register();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
