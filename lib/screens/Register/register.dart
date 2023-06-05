@@ -1,4 +1,5 @@
 import 'package:WorkWise/screens/MainPage/main_page.dart';
+import 'package:WorkWise/screens/onboarding_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -396,15 +397,15 @@ class _RegisterPageState extends State<RegisterPage>
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 25),
                       child: GestureDetector(
-                        onTap: () async {
-                          bool isRegistered = register() as bool;
-                          if (isRegistered) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const MainPage()),
-                            );
-                          }
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return OnboardingScreen();
+                              },
+                            ),
+                          );
                         },
                         child: Container(
                           padding: EdgeInsets.all(12),

@@ -153,10 +153,10 @@ class _LoginPageState extends State<LoginPage>
                               borderSide: BorderSide(color: Colors.black87),
                             ),
                             focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent),
+                              borderSide: BorderSide(color: Colors.blue),
                             ),
                             errorBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.red),
+                              borderSide: BorderSide(color: Colors.blue),
                             ),
                           ),
                         ),
@@ -190,10 +190,10 @@ class _LoginPageState extends State<LoginPage>
                               borderSide: BorderSide(color: Colors.white),
                             ),
                             focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent),
+                              borderSide: BorderSide(color: Colors.blue),
                             ),
                             errorBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.red),
+                              borderSide: BorderSide(color: Colors.blue),
                             ),
                             suffixIcon: IconButton(
                               color: Colors.blueGrey,

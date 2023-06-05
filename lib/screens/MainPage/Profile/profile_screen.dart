@@ -162,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   CircleAvatar(
                     radius: 60,
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.black54,
                     child: Text(
                       nameandsurname.isNotEmpty
                           ? nameandsurname[0].toUpperCase()
@@ -254,7 +254,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _isEditing = !_isEditing;
                 });
               },
-              child: Text(_isEditing ? 'Save' : 'Edit'),
+              child: Text(
+                _isEditing ? 'Save' : 'Edit',
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+              ),
             ),
           ),
         ],
