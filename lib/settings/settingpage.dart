@@ -1,10 +1,14 @@
-import 'package:WorkWise/screens/MainPage/Profile/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../provider/theme_provider.dart';
 import '../screens/Login/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'ChangePassword.dart';
+
 
 void settingpage() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +38,7 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _emailController = TextEditingController();
+
 
   @override
   void dispose() {
@@ -127,6 +132,31 @@ class _SettingPageUIState extends State<SettingPageUI> {
     }
   }
 
+  Future<MySqlConnection> getConnection() async {
+    final settings = new ConnectionSettings(
+      host: '213.238.183.81',
+      port: 3306,
+      user: 'httpdegm_hudai',
+      password: ',sPE[gd^hbl1',
+      db: 'httpdegm_database1',
+    );
+    return await MySqlConnection.connect(settings);
+  }
+
+  Future<void> deleteUser(int userId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt('userId') ?? 0;
+
+    var conn = await getConnection();
+    await conn.query(
+      'DELETE FROM User WHERE id = ?',
+      [userId],
+    );
+    await conn.close();
+
+    await prefs.remove('userId');
+  }
+
   bool valNotify1 = true;
   bool valNotify2 = false;
   bool valNotify3 = false;
@@ -166,6 +196,11 @@ class _SettingPageUIState extends State<SettingPageUI> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<themeProvider>(context);
+    final TextStyle titleStylew = TextStyle(
+      fontSize: 25,
+      fontWeight: FontWeight.bold,
+      color: theme.getTheme().brightness == Brightness.light ? Colors.black : Colors.white,
+    );
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: theme.getTheme(),
@@ -207,7 +242,7 @@ class _SettingPageUIState extends State<SettingPageUI> {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return ForgotPasswordPage();
+                        return PasswordChangePage();
                       },
                     ),
                   );
@@ -219,8 +254,8 @@ class _SettingPageUIState extends State<SettingPageUI> {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 8,
-                        blurRadius: 7,
+                        spreadRadius: 3,
+                        blurRadius: 3,
                         offset: Offset(0, 3),
                       ),
                     ],
@@ -262,8 +297,8 @@ class _SettingPageUIState extends State<SettingPageUI> {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 8,
-                        blurRadius: 7,
+                        spreadRadius: 3,
+                        blurRadius: 3,
                         offset: Offset(0, 3),
                       ),
                     ],
@@ -290,8 +325,8 @@ class _SettingPageUIState extends State<SettingPageUI> {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 8,
-                        blurRadius: 7,
+                        spreadRadius: 3,
+                        blurRadius: 3,
                         offset: Offset(0, 3),
                       ),
                     ],
@@ -329,14 +364,63 @@ class _SettingPageUIState extends State<SettingPageUI> {
               IconButton(
                 onPressed: () => theme.setTheme(ThemeData.dark()),
                 icon: Icon(Icons.nights_stay),
-                /* setState(() {
-          _iconBool = !_iconBool;
-        });*/
-                /* icon: Icon(_iconBool ? _iconDark : _iconLight),*/
               ),
               IconButton(
                 onPressed: () => theme.setTheme(ThemeData.light()),
                 icon: Icon(Icons.wb_sunny),
+              ),
+              SizedBox(height: 10),
+              TextButton(
+                onPressed: () async {
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  int userId = prefs.getInt('userId') ?? 0;
+                  deleteUser(userId);
+                  await deleteUser(userId);
+                  bool isDelete = true;
+                  if (isDelete) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginPage(
+                          showRegisterPage: () {},
+                        ),
+                      ),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Account Deleted'),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Account Colud Not Delete'),
+                      ),
+                    );
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 3,
+                        blurRadius: 3,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    "    Delete Account !    ",
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
               ),
               SizedBox(height: 50),
               Center(
@@ -357,12 +441,26 @@ class _SettingPageUIState extends State<SettingPageUI> {
                       ),
                     );
                   },
-                  child: Text(
-                    "SIGN OUT",
-                    style: TextStyle(
-                      fontSize: 16,
-                      letterSpacing: 2.2,
-                      color: Colors.black,
+                  child:Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 3,
+                          blurRadius: 3,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      "SIGN OUT",
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ),
@@ -373,6 +471,7 @@ class _SettingPageUIState extends State<SettingPageUI> {
       ),
     );
   }
+
 
   Padding buildNotificationOption(
       String title, bool value, Function onChangeMethod) {

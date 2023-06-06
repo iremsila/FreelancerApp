@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:provider/provider.dart';
+import '../../../provider/theme_provider.dart';
 import '../Jobs/job_detail.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -12,6 +14,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final _searchController = TextEditingController();
   List<Map<String, dynamic>> _searchResults = [];
+
   Future<void> _performSearch(String? keyword) async {
     final settings = ConnectionSettings(
       host: '213.238.183.81',
@@ -41,16 +44,21 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProviderData = Provider.of<themeProvider>(context);
+    final bool isLightTheme = themeProviderData.getTheme().brightness == Brightness.light;
+    final Color appBarTextColor = isLightTheme ? Colors.black : Colors.white;
+    final Color appBarBackgroundColor = themeProviderData.getTheme().scaffoldBackgroundColor;
+    final Color backgroundColor = isLightTheme ? Colors.white : Colors.black;
+    final Color foregroundColor = isLightTheme ? Colors.black : Colors.white;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
-        backgroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        backgroundColor: appBarBackgroundColor,
         title: Text(
           'Discover & Search',
-          style:
-              GoogleFonts.openSans(fontSize: 20, fontWeight: FontWeight.bold),
+          style: GoogleFonts.openSans(fontSize: 25, fontWeight: FontWeight.bold, color: appBarTextColor),
         ),
         elevation: 2,
       ),
@@ -62,7 +70,7 @@ class _SearchScreenState extends State<SearchScreen> {
               controller: _searchController,
               onChanged: (value) {
                 setState(() {
-                  _searchResults.clear(); // Önceki arama sonuçlarını temizle
+                  _searchResults.clear();
                 });
                 if (value.isNotEmpty) {
                   _performSearch(value);
@@ -96,6 +104,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ],
       ),
+      backgroundColor: backgroundColor,
     );
   }
 }

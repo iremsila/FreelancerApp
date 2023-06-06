@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../provider/theme_provider.dart';
 import 'job_card.dart';
 import 'job_detail.dart';
 
@@ -85,6 +87,7 @@ class _JobListScreenState extends State<JobListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<themeProvider>(context);
     String title = '';
     if (userRole == 'Employer') {
       title = 'Jobs You Posted';
@@ -92,22 +95,24 @@ class _JobListScreenState extends State<JobListScreen> {
       title = 'Jobs You Applied';
     }
 
+    final themeProviderData = Provider.of<themeProvider>(context);
+    final bool isLightTheme = themeProviderData.getTheme().brightness == Brightness.light;
+    final Color appBarTextColor = isLightTheme ? Colors.black : Colors.white;
+    final Color appBarBackgroundColor = themeProviderData.getTheme().scaffoldBackgroundColor;
+    final Color backgroundColor = isLightTheme ? Colors.white : Colors.black;
+    final Color foregroundColor = isLightTheme ? Colors.black : Colors.white;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-        ),
-        backgroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        backgroundColor: appBarBackgroundColor,
         title: Text(
           title,
-          style: GoogleFonts.openSans(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: GoogleFonts.openSans(fontSize: 25, fontWeight: FontWeight.bold, color: appBarTextColor),
         ),
         elevation: 2,
       ),
+
       body: ListView.builder(
         itemCount: jobList.length,
         itemBuilder: (context, index) {

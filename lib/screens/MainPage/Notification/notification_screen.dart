@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../provider/theme_provider.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);
@@ -27,7 +30,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Future<MySqlConnection> getConnection() async {
-    final settings = new ConnectionSettings(
+    final settings = ConnectionSettings(
       host: '213.238.183.81',
       port: 3306,
       user: 'httpdegm_hudai',
@@ -118,16 +121,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProviderData = Provider.of<themeProvider>(context);
+    final bool isLightTheme = themeProviderData.getTheme().brightness == Brightness.light;
+    final Color appBarTextColor = isLightTheme ? Colors.black : Colors.white;
+    final Color appBarBackgroundColor = themeProviderData.getTheme().scaffoldBackgroundColor;
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
-        backgroundColor: Colors.white,
+      automaticallyImplyLeading: false,
+        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        backgroundColor: appBarBackgroundColor,
         title: Text(
           'Notification',
-          style:
-              GoogleFonts.openSans(fontSize: 20, fontWeight: FontWeight.bold),
+          style: GoogleFonts.openSans(fontSize: 25, fontWeight: FontWeight.bold, color: appBarTextColor),
         ),
         elevation: 2,
       ),
@@ -142,7 +147,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             direction: DismissDirection.horizontal,
             background: Container(
               color: Colors.red,
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               alignment: AlignmentDirectional.centerStart,
               child: Icon(
                 Icons.delete,
@@ -151,7 +156,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ),
             secondaryBackground: Container(
               color: Colors.red,
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               alignment: AlignmentDirectional.centerEnd,
               child: Icon(
                 Icons.delete,
@@ -163,13 +168,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
             },
             child: ListTile(
               title: Text(notification['message']),
-              tileColor:
-                  isRead ? Colors.grey.shade400 : Colors.greenAccent.shade200,
-              onTap: isRead
-                  ? null
-                  : () {
-                      markNotificationAsRead(notification['id']);
-                    },
+              tileColor: isRead ? Colors.grey.shade400 : Colors.greenAccent.shade200,
+              onTap: isRead ? null : () {
+                markNotificationAsRead(notification['id']);
+              },
             ),
           );
         },

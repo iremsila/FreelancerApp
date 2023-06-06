@@ -1,7 +1,8 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../provider/theme_provider.dart'; // Doğru tema sağlayıcı dosyasını içe aktar
 import 'Jobs/jobs_screen.dart';
 import 'Jobs/posted_job.dart';
 import 'Notification/notification_screen.dart';
@@ -30,10 +31,11 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    fetchNotificationCount(); // Bildirim sayısını güncellemek için çağrı yapılıyor
   }
 
   Future<MySqlConnection> getConnection() async {
-    final settings = new ConnectionSettings(
+    final settings = ConnectionSettings(
       host: '213.238.183.81',
       port: 3306,
       user: 'httpdegm_hudai',
@@ -60,10 +62,24 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  Future<void> markNotificationsAsRead() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt('userId') ?? 0;
+    var conn = await getConnection();
+    await conn.query(
+      'UPDATE notifications SET is_read = 1 WHERE receiver_id = ?',
+      [userId],
+    );
+    await conn.close();
+
+    setState(() {
+      notificationCount = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    fetchNotificationCount(); // Bildirim sayısını güncellemek için çağrı yapılıyor
-
+    final themeProviderData = Provider.of<themeProvider>(context); // Sağlayıcı sınıfının adını güncelledim
     final items = <Widget>[
       const Icon(
         Icons.home,
@@ -117,28 +133,46 @@ class _MainPageState extends State<MainPage> {
       top: false,
       child: ClipRect(
         child: Scaffold(
-          backgroundColor: Colors.grey.shade50,
+          backgroundColor: themeProviderData.getTheme().scaffoldBackgroundColor,
           extendBody: true,
-          body: screens[index],
+          body: GestureDetector(
+            onTap: () {
+              // Bildirime tıklandığında burası çalışacak
+              if (notificationCount > 0) {
+                markNotificationsAsRead();
+                // Burada bildirimleri okundu olarak işaretlemek veya sayıyı sıfırlamak için işlemler yapabilirsiniz
+              }
+            },
+            child: screens[index],
+          ),
           bottomNavigationBar: Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 15,
-                    offset: Offset(0.0, 0.75))
+                  color: Colors.black26,
+                  blurRadius: 15,
+                  offset: const Offset(0.0, 0.75),
+                ),
               ],
             ),
-            child: CurvedNavigationBar(
-              color: Colors.white,
-              backgroundColor: Colors.transparent,
-              buttonBackgroundColor: Colors.cyan,
-              animationCurve: Curves.easeInOut,
-              animationDuration: const Duration(milliseconds: 300),
-              height: 60,
-              index: index,
-              items: items,
-              onTap: (index) => setState(() => this.index = index),
+            child: Consumer<themeProvider>(
+              builder: (context, themeProviderData, _) => BottomNavigationBar(
+                backgroundColor: themeProviderData.getTheme().scaffoldBackgroundColor,
+                selectedItemColor: themeProviderData.getTheme().textTheme.bodyText1?.color,
+                unselectedItemColor: themeProviderData.getTheme().textTheme.bodyText2?.color,
+                currentIndex: index,
+                items: items.map((Widget item) {
+                  return BottomNavigationBarItem(
+                    icon: item,
+                    label: '',
+                  );
+                }).toList(),
+                onTap: (int tappedIndex) {
+                  setState(() {
+                    index = tappedIndex;
+                  });
+                },
+              ),
             ),
           ),
         ),

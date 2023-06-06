@@ -3,21 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../provider/theme_provider.dart';
 import '../Category/category_jobs.dart';
 import '../Category/category_list.dart';
 import 'job_card_2.dart';
 import 'job_detail.dart';
 
 class JobScreen extends StatefulWidget {
-  JobScreen({super.key});
+  JobScreen({Key? key}) : super(key: key);
 
   @override
   State<JobScreen> createState() => _JobScreenState();
 }
 
-class _JobScreenState extends State<JobScreen>
-    with SingleTickerProviderStateMixin {
+class _JobScreenState extends State<JobScreen> with SingleTickerProviderStateMixin {
   List<Map<String, dynamic>> jobs = [];
   String userRole = '';
 
@@ -38,8 +39,7 @@ class _JobScreenState extends State<JobScreen>
 
   Future<List<Map<String, dynamic>>> fetchData() async {
     var conn = await getConnection();
-    var results =
-        await conn.query('SELECT * FROM upload_job1 ORDER BY date_posted ASC');
+    var results = await conn.query('SELECT * FROM upload_job1 ORDER BY date_posted ASC');
     await conn.close();
     return results.map((resultRow) {
       return Map<String, dynamic>.from(resultRow.fields);
@@ -53,13 +53,13 @@ class _JobScreenState extends State<JobScreen>
     var results = await conn.query(
       'SELECT freelanceroremployer FROM User WHERE id = ?',
       [userId],
-    ); // Kullanıcının kimlik bilgisine göre sorguyu güncelleyin
+    );
     await conn.close();
     if (results.isNotEmpty) {
       var row = results.first;
       return row['freelanceroremployer'];
     } else {
-      return ''; // Varsayılan rol değeri, eğer kullanıcının rolü bulunamazsa
+      return '';
     }
   }
 
@@ -95,20 +95,29 @@ class _JobScreenState extends State<JobScreen>
 
   @override
   Widget build(BuildContext context) {
+    final themeProviderData = Provider.of<themeProvider>(context);
+    final ThemeData appTheme = themeProviderData.getTheme();
+    final Color appBarBackgroundColor =
+    appTheme.brightness == Brightness.light ? Colors.white : appTheme.scaffoldBackgroundColor;
+    final Color appBarForegroundColor =
+    appTheme.brightness == Brightness.light ? Colors.black : Colors.white;
+    final TextStyle titleStyle = TextStyle(
+      fontSize: 30,
+      fontWeight: FontWeight.bold,
+      color: appBarForegroundColor,
+    );
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
-        backgroundColor: Colors.white,
+        systemOverlayStyle: const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        backgroundColor: appBarBackgroundColor,
         title: Text(
           'WorkWise',
-          style:
-              GoogleFonts.openSans(fontSize: 30, fontWeight: FontWeight.bold),
+          style: titleStyle,
         ),
         elevation: 2,
         actions: [
-          // Kullanıcı işveren ise düğmeyi göster
           if (userRole == 'Employer')
             Padding(
               padding: EdgeInsets.only(right: 16, bottom: 8),
@@ -121,8 +130,7 @@ class _JobScreenState extends State<JobScreen>
                 },
                 child: Text(
                   "POST JOB NOW",
-                  style: GoogleFonts.openSans(
-                      fontSize: 15, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.openSans(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 style: TextButton.styleFrom(
                   elevation: 5,
@@ -138,13 +146,13 @@ class _JobScreenState extends State<JobScreen>
             ),
         ],
       ),
-      backgroundColor: Colors.transparent,
+      backgroundColor: appTheme.scaffoldBackgroundColor,
       body: Column(
         children: [
           const SizedBox(height: 30),
           Row(
             children: [
-              SizedBox(width: 16), // Başlangıçtan boşluk ekledik
+              SizedBox(width: 16),
               Text(
                 "Popular Services",
                 textAlign: TextAlign.start,
@@ -160,8 +168,7 @@ class _JobScreenState extends State<JobScreen>
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => CategoriesPage()),
+                        MaterialPageRoute(builder: (context) => CategoriesPage()),
                       );
                     },
                     child: Row(
@@ -170,25 +177,22 @@ class _JobScreenState extends State<JobScreen>
                         Text(
                           "See All",
                           style: GoogleFonts.openSans(
-                            fontSize: 16, // See All metni daha küçük
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Icon(Icons.arrow_forward_ios, size: 16),
-                        // Okun boyutunu küçülttük
                       ],
                     ),
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.blue,
                       padding: EdgeInsets.zero,
-                      // Buton kenar boşlukları
-                      tapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap, // Buton boyutu
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                   ),
                 ),
               ),
-              SizedBox(width: 16), // Sondan boşluk ekledik
+              SizedBox(width: 16),
             ],
           ),
           const SizedBox(height: 10),
@@ -243,39 +247,34 @@ class _JobScreenState extends State<JobScreen>
       GestureDetector(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CategoryJobsPage(category: item.title),
-              ));
+            context,
+            MaterialPageRoute(
+              builder: (context) => CategoryJobsPage(category: item.title),
+            ),
+          );
         },
         child: Container(
-          height: 60,
-          width: 120,
+          width: 150,
           decoration: BoxDecoration(
-            color: Color(0xfffafbfd),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                    height: 50,
-                    width: 50,
-                    child: Image.asset(
-                      item.urlImage,
-                    )),
-                Text(
-                  item.title,
-                  textAlign: TextAlign.center,
-                  // Metni ortalamak için textAlign özelliğini ekledik
-                  style: GoogleFonts.openSans(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                item.urlImage,
+                width: 50,
+                height: 50,
+              ),
+              const SizedBox(height: 5),
+              Text(
+                item.title,
+                style: GoogleFonts.openSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );
@@ -285,5 +284,8 @@ class CardItem {
   final String urlImage;
   final String title;
 
-  CardItem({required this.urlImage, required this.title});
+  CardItem({
+    required this.urlImage,
+    required this.title,
+  });
 }

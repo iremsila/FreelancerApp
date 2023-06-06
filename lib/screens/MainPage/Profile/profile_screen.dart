@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../provider/theme_provider.dart';
 import '../../Login/login.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -122,25 +124,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => LoginPage(
-                showRegisterPage: () {},
-              )),
+        builder: (context) => LoginPage(
+          showRegisterPage: () {},
+        ),
+      ),
     );
     // LoginPage'a yönlendir
   }
 
   @override
   Widget build(BuildContext context) {
+    final themeProviderData = Provider.of<themeProvider>(context);
+    final TextStyle titleStyle = TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+      color: themeProviderData.getTheme().brightness == Brightness.light ? Colors.black : Colors.white,
+    );
+    final bool isLightTheme = themeProviderData.getTheme().brightness == Brightness.light;
+    final Color appBarTextColor = isLightTheme ? Colors.black : Colors.white;
+    final Color appBarBackgroundColor = themeProviderData.getTheme().scaffoldBackgroundColor;
+    final Color backgroundColor = isLightTheme ? Colors.white : Colors.black;
+    final Color foregroundColor = isLightTheme ? Colors.black : Colors.white;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
-        backgroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        backgroundColor: appBarBackgroundColor,
         title: Text(
           'Profile',
-          style:
-              GoogleFonts.openSans(fontSize: 20, fontWeight: FontWeight.bold),
+          style: GoogleFonts.openSans(fontSize: 25, fontWeight: FontWeight.bold, color: appBarTextColor),
         ),
         elevation: 2,
         actions: [
@@ -157,16 +169,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: 20,
-                  ),
+                  SizedBox(height: 20),
                   CircleAvatar(
                     radius: 60,
                     backgroundColor: Colors.black54,
                     child: Text(
-                      nameandsurname.isNotEmpty
-                          ? nameandsurname[0].toUpperCase()
-                          : '',
+                      nameandsurname.isNotEmpty ? nameandsurname[0].toUpperCase() : '',
                       style: TextStyle(fontSize: 40, color: Colors.white),
                     ),
                   ),
@@ -196,20 +204,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   _isEditing
                       ? TextFormField(
-                          controller: _abilitiesController,
-                          decoration: InputDecoration(
-                            labelText: 'Enter your abilities',
-                          ),
-                          maxLines: null,
-                          keyboardType: TextInputType.multiline,
-                        )
+                    controller: _abilitiesController,
+                    decoration: InputDecoration(
+                      labelText: 'Enter your abilities',
+                    ),
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                  )
                       : Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            abilities,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      abilities,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
                   SizedBox(height: 16),
                   Container(
                     width: 120,
@@ -223,8 +231,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => SettingPageUI()),
+                            MaterialPageRoute(builder: (context) => SettingPageUI()),
                           );
                         },
                         child: Text(
@@ -256,12 +263,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
               child: Text(
                 _isEditing ? 'Save' : 'Edit',
-                style: TextStyle(fontSize: 16, color: Colors.black54),
+                style: titleStyle,
               ),
             ),
           ),
         ],
       ),
+      backgroundColor: backgroundColor,
     );
   }
 }

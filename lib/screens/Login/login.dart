@@ -55,7 +55,6 @@ class _LoginPageState extends State<LoginPage>
       final int userId = userRow['id'];
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
-
       await prefs.setInt('userId', userId);
       return true;
     } else {
