@@ -4,6 +4,7 @@ import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   @override
@@ -12,18 +13,12 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   TextEditingController _emailController = TextEditingController();
+  TextEditingController _tokenController = TextEditingController();
+  TextEditingController _newPasswordController = TextEditingController();
   late String _resetToken;
   bool _tokenMatched = false;
   bool _passwordReset = false;
-  TextEditingController _newPasswordController = TextEditingController();
-
   MySqlConnection? _connection;
-
-  @override
-  void initState() {
-    super.initState();
-    _connectToDatabase();
-  }
 
   @override
   void dispose() {
@@ -70,6 +65,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   ),
                   SizedBox(height: 16.0),
                   TextField(
+                    controller: _tokenController,
+                    decoration: InputDecoration(
+                      labelText: 'Token',
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  TextField(
                     controller: _newPasswordController,
                     decoration: InputDecoration(
                       labelText: 'New Password',
@@ -86,19 +88,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 
-  Future<void> _connectToDatabase() async {
-    final settings = ConnectionSettings(
-      host: '213.238.183.81',
-      port: 3306,
-      user: 'httpdegm_melike',
-      password: 'A}c74e&QAI[x',
-      db: 'httpdegm_database1',
-    );
-
-    _connection = await MySqlConnection.connect(settings);
-  }
-
   void _sendResetEmail() async {
+    await _connectToDatabase();
+
     String email = _emailController.text;
 
     if (!await _checkEmailExists(email)) {
@@ -185,7 +177,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   void _resetPassword() async {
+    await _connectToDatabase();
+
     String email = _emailController.text;
+    String token = _tokenController.text;
     String newPassword = _newPasswordController.text;
 
     if (!await _checkEmailExists(email)) {
@@ -208,14 +203,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       );
       return;
     }
-    Future<void> _updatePassword(String email, String newPassword) async {
-      await _connection?.query(
-        'UPDATE User SET password = ? WHERE email = ?',
-        [newPassword, email],
-      );
-    }
 
-    if (await _checkTokenFromDatabase(email, _resetToken)) {
+    if (await _checkTokenFromDatabase(email, token)) {
       await _updatePassword(email, newPassword);
       showDialog(
         context: context,
@@ -255,40 +244,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     }
   }
 
-  String _generateToken() {
-    var random = Random();
-    const chars = '0123456789';
-    return List.generate(5, (index) => chars[random.nextInt(chars.length)])
-        .join();
-  }
-
-  Future<void> _saveTokenToDatabase(String email, String token) async {
-    await _connection?.query(
-      'INSERT INTO change_password(user_id, token) VALUES(?, ?)',
-      [await _getUserId(email), token],
-    );
-  }
-
-  Future<bool> _checkTokenFromDatabase(String email, String token) async {
-    final result = await _connection?.query(
-      'SELECT * FROM change_password WHERE user_id = ? AND token = ?',
-      [await _getUserId(email), token],
+  Future<void> _connectToDatabase() async {
+    final settings = ConnectionSettings(
+      host: '213.238.183.81',
+      port: 3306,
+      user: 'httpdegm_melike',
+      password: 'A}c74e&QAI[x',
+      db: 'httpdegm_database1',
     );
 
-    return result!.isNotEmpty;
-  }
-
-  Future<int> _getUserId(String email) async {
-    final result = await _connection?.query(
-      'SELECT id FROM User WHERE email = ?',
-      [email],
-    );
-
-    if (result!.isNotEmpty) {
-      return result.first[0];
-    } else {
-      return -1;
-    }
+    _connection = await MySqlConnection.connect(settings);
   }
 
   Future<bool> _checkEmailExists(String email) async {
@@ -296,6 +261,43 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       'SELECT * FROM User WHERE email = ?',
       [email],
     );
-    return result!.isNotEmpty;
+
+    return result?.isNotEmpty ?? false;
+  }
+
+  Future<void> _saveTokenToDatabase(String email, String token) async {
+    await _connection?.query(
+      'UPDATE User SET token = ? WHERE email = ? ',
+      [token, email],
+    );
+  }
+
+  Future<bool> _checkTokenFromDatabase(String email, String token) async {
+    final result = await _connection?.query(
+      'SELECT * FROM User WHERE email = ? AND token = ?',
+      [email, token],
+    );
+
+    return result?.isNotEmpty ?? false;
+  }
+
+  Future<void> _updatePassword(String email, String password) async {
+    await _connection?.query(
+      'UPDATE User SET password = ? WHERE email = ?',
+      [password, email],
+    );
+  }
+
+  String _generateToken() {
+    Random random = Random();
+    const int tokenLength = 6;
+    const String chars = '0123456789';
+    String token = '';
+
+    for (int i = 0; i < tokenLength; i++) {
+      token += chars[random.nextInt(chars.length)];
+    }
+
+    return token;
   }
 }

@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage>
               child: Container(
                 margin: EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white70,
+                  color: Colors.white54,
                   borderRadius: BorderRadius.circular(35),
                 ),
                 child: Center(

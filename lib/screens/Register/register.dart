@@ -198,10 +198,10 @@ class _RegisterPageState extends State<RegisterPage>
                             borderSide: BorderSide(color: Colors.black87),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.redAccent),
+                            borderSide: BorderSide(color: Colors.blue),
                           ),
                           errorBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
+                            borderSide: BorderSide(color: Colors.blue),
                           ),
                         ),
                       ),
@@ -223,10 +223,10 @@ class _RegisterPageState extends State<RegisterPage>
                             borderSide: BorderSide(color: Colors.black87),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.redAccent),
+                            borderSide: BorderSide(color: Colors.blue),
                           ),
                           errorBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
+                            borderSide: BorderSide(color: Colors.blue),
                           ),
                         ),
                       ),
@@ -248,10 +248,10 @@ class _RegisterPageState extends State<RegisterPage>
                             borderSide: BorderSide(color: Colors.black87),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.redAccent),
+                            borderSide: BorderSide(color: Colors.blue),
                           ),
                           errorBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
+                            borderSide: BorderSide(color: Colors.blue),
                           ),
                         ),
                       ),
@@ -281,10 +281,10 @@ class _RegisterPageState extends State<RegisterPage>
                             borderSide: BorderSide(color: Colors.black87),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.redAccent),
+                            borderSide: BorderSide(color: Colors.blue),
                           ),
                           errorBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
+                            borderSide: BorderSide(color: Colors.blue),
                           ),
                           suffixIcon: IconButton(
                             color: Colors.blueGrey,
@@ -322,10 +322,10 @@ class _RegisterPageState extends State<RegisterPage>
                             borderSide: BorderSide(color: Colors.black87),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.redAccent),
+                            borderSide: BorderSide(color: Colors.blue),
                           ),
                           errorBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
+                            borderSide: BorderSide(color: Colors.blue),
                           ),
                           suffixIcon: IconButton(
                             color: Colors.blueGrey,
