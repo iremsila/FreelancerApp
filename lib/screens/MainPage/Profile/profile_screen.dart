@@ -189,24 +189,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProviderData = Provider.of<ThemeProvider>(context);
+    final bool isLightTheme = themeProviderData.getTheme().brightness == Brightness.light;
+    final Color appBarTextColor = isLightTheme ? Colors.black : Colors.white;
+    final Color appBarBackgroundColor = themeProviderData.getTheme().scaffoldBackgroundColor;
+    final Color TextColor2 = isLightTheme ? Colors.black : Colors.white;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-        ),
-        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        backgroundColor: appBarBackgroundColor,
         title: Text(
           'Profile',
-          style: GoogleFonts.openSans(
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-          ),
+          style: GoogleFonts.openSans(fontSize: 25, fontWeight: FontWeight.bold, color: appBarTextColor),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.settings, color: TextColor2),
             onPressed: () {
               Navigator.push(
                 context,
@@ -215,7 +215,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: Icon(Icons.logout,color: TextColor2),
             onPressed: () {
               showDialog(
                 context: context,
