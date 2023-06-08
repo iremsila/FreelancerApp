@@ -17,7 +17,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String nameandsurname = '';
   String email = '';
-  int rating = 5;
+  double rating = 5.0;
   List<Map<String, dynamic>> abilities = [];
   TextEditingController _abilityNameController = TextEditingController();
   TextEditingController _abilityRatingController = TextEditingController();
@@ -396,13 +396,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   SizedBox(height: 16),
                   Slider(
-                    value: (rating ?? 0).toDouble(),
+                    value: rating.toDouble(), // Convert 'rating' to 'double'
                     min: 0,
                     max: 10,
                     divisions: 10,
-                    onChanged: (value) {
+                    onChanged: (double value) {
                       setState(() {
-                        rating = value.toInt();
+                        rating = value; // Convert 'value' to 'int'
                       });
                     },
                   ),
