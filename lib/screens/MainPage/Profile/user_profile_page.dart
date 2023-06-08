@@ -14,6 +14,7 @@ class UserProfilePage extends StatefulWidget {
 
 class _UserProfilePageState extends State<UserProfilePage> {
   bool isApproved = false;
+  List<Map<String, dynamic>> abilities = [];
 
   Future<MySqlConnection> getConnection() async {
     final settings = new ConnectionSettings(
@@ -26,17 +27,23 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return await MySqlConnection.connect(settings);
   }
 
-  Future<Map<String, dynamic>> fetchProfile(int userId) async {
+  Future<List<Map<String, dynamic>>> fetchAbilities(int userId) async {
     final conn = await getConnection();
 
     final results =
-        await conn.query('SELECT * FROM profile WHERE user_id = ?', [userId]);
+    await conn.query('SELECT abilities, rating FROM profile WHERE user_id = ?', [userId]);
 
-    final profile = results.first.fields;
+    final List<Map<String, dynamic>> fetchedAbilities = [];
+    for (var row in results) {
+      final fields = row.fields;
+      final ability = fields['abilities'] as String;
+      final rating = fields['rating']?.toInt() ?? 0;
+      fetchedAbilities.add({'abilities': ability, 'rating': rating});
+    }
 
     await conn.close();
 
-    return profile;
+    return fetchedAbilities;
   }
 
   Future<void> fetchApplicationStatus() async {
@@ -106,6 +113,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
   void initState() {
     super.initState();
     fetchApplicationStatus();
+    fetchAbilities(widget.user['id']).then((List<Map<String, dynamic>> fetchedAbilities) {
+      setState(() {
+        abilities = fetchedAbilities;
+      });
+    });
   }
 
   @override
@@ -117,10 +129,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              'Name and Surname: ${widget.user['nameandsurname']}',
+              '${widget.user['nameandsurname']}',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8.0),
@@ -128,38 +140,53 @@ class _UserProfilePageState extends State<UserProfilePage> {
               'Age: ${widget.user['age']}',
               style: TextStyle(fontSize: 16.0),
             ),
-            SizedBox(height: 8.0),
+            SizedBox(height: 16.0),
             Text(
-              'Email: ${widget.user['email']}',
-              style: TextStyle(fontSize: 16.0),
+              'Abilities',
+              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8.0),
-            FutureBuilder(
-              future: fetchProfile(widget.user['id']),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return SizedBox(
-                    width: 40.0,
-                    height: 40.0,
-                    child: Center(
-                      child: CircularProgressIndicator(),
+            Expanded(
+              child: ListView.builder(
+                itemCount: abilities.length,
+                itemBuilder: (context, index) {
+                  final ability = abilities[index];
+                  final String abilityName = ability['abilities'];
+                  final int rating = ability['rating'];
+
+                  return Card(
+                    child: ListTile(
+                      title: Text(abilityName),
+                      subtitle: Text('Rating: $rating'),
                     ),
                   );
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  final profile = snapshot.data as Map<String, dynamic>;
-                  return Text(
-                    'Abilities: ${profile['abilities']}',
-                    style: TextStyle(fontSize: 16.0),
-                  );
-                }
-              },
+                },
+              ),
             ),
+            SizedBox(height: 16.0),
+            Text(
+              'Contact Information',
+              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.0),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(Icons.mail),
+                      title: Text('Email'),
+                      subtitle: Text('${widget.user['email']}'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: isApproved ? null : approveApplication,
-              child: Text(
-                  isApproved ? 'Application Approved' : 'Approve Application'),
+              child: Text(isApproved ? 'Application Approved' : 'Approve Application'),
             ),
           ],
         ),
