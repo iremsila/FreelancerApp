@@ -17,7 +17,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String nameandsurname = '';
   String email = '';
-  late int rating;
+  int rating = 5;
   List<Map<String, dynamic>> abilities = [];
   TextEditingController _abilityNameController = TextEditingController();
   TextEditingController _abilityRatingController = TextEditingController();
@@ -126,259 +126,316 @@ class _ProfileScreenState extends State<ProfileScreen> {
       db: 'httpdegm_database1',
     ));
 
-    final abilityName = _abilityNameController.text;
-    final abilityRating = int.parse(_abilityRatingController.text);
-
     await conn.query(
       'INSERT INTO profile (user_id, abilities, rating) VALUES (?, ?, ?)',
-      [userId, abilityName, abilityRating],
+      [userId, _abilityNameController.text, rating],
     );
 
-    final updatedResults = await conn.query(
+    final profileResults = await conn.query(
       'SELECT abilities, rating FROM profile WHERE user_id = ?',
       [userId],
     );
 
-    if (updatedResults.isNotEmpty) {
+    if (profileResults.isNotEmpty) {
       setState(() {
-        abilities = updatedResults.map((row) {
-          return {
-            'name': row['abilities'],
-            'rating': row['rating'],
-          };
-        }).toList();
-        _abilityNameController.clear();
-        _abilityRatingController.clear();
+        abilities = profileResults
+            .map((row) => {
+                  'name': row['abilities'],
+                  'rating': row['rating'],
+                })
+            .toList();
       });
     }
 
     await conn.close();
   }
 
-  void logout() async {
+  Future<void> deleteAbility(int index) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('userId');
+    int userId = prefs.getInt('userId') ?? 0;
+    final conn = await MySqlConnection.connect(ConnectionSettings(
+      host: '213.238.183.81',
+      port: 3306,
+      user: 'httpdegm_melike',
+      password: 'A}c74e&QAI[x',
+      db: 'httpdegm_database1',
+    ));
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoginPage(
-          showRegisterPage: () {},
-        ),
-      ),
+    final abilityName = abilities[index]['name'];
+
+    await conn.query(
+      'DELETE FROM profile WHERE user_id = ? AND abilities = ?',
+      [userId, abilityName],
     );
+
+    final profileResults = await conn.query(
+      'SELECT abilities, rating FROM profile WHERE user_id = ?',
+      [userId],
+    );
+
+    if (profileResults.isNotEmpty) {
+      setState(() {
+        abilities = profileResults
+            .map((row) => {
+                  'name': row['abilities'],
+                  'rating': row['rating'],
+                })
+            .toList();
+      });
+    }
+
+    await conn.close();
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeProviderData = Provider.of<ThemeProvider>(context);
-    final TextStyle titleStyle = TextStyle(
-      fontSize: 20,
-      fontWeight: FontWeight.bold,
-      color: themeProviderData.getTheme().brightness == Brightness.light
-          ? Colors.black
-          : Colors.white,
-    );
-    final bool isLightTheme =
-        themeProviderData.getTheme().brightness == Brightness.light;
-    final Color appBarTextColor = isLightTheme ? Colors.black : Colors.white;
-    final Color appBarBackgroundColor =
-        themeProviderData.getTheme().scaffoldBackgroundColor;
-    final Color backgroundColor = isLightTheme ? Colors.white : Colors.black;
-    final Color foregroundColor = isLightTheme ? Colors.black : Colors.white;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
         ),
-        backgroundColor: appBarBackgroundColor,
+        elevation: 0,
         title: Text(
           'Profile',
           style: GoogleFonts.openSans(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: appBarTextColor),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        elevation: 2,
         actions: [
           IconButton(
-            onPressed: logout,
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingPageUI()),
+              );
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.logout),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text('Confirmation'),
+                    content: Text('Are you sure you want to log out?'),
+                    actions: [
+                      TextButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      TextButton(
+                        child: Text('Log Out'),
+                        onPressed: () {
+                          SharedPreferences.getInstance().then((prefs) {
+                            prefs.clear().then((value) {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) => LoginPage(
+                                    showRegisterPage: () {},
+                                  ),
+                                ),
+                                ModalRoute.withName('/'),
+                              );
+                            });
+                          });
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
           ),
         ],
       ),
-      body: Stack(
+      body: Column(
         children: [
-          SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 20,
+          SizedBox(height: 16),
+          CircleAvatar(
+            radius: 50,
+            backgroundColor: Colors.black54,
+            child: Text(
+              nameandsurname.isNotEmpty ? nameandsurname[0].toUpperCase() : '',
+              style: TextStyle(fontSize: 40, color: Colors.white),
+            ),
+          ),
+          SizedBox(height: 16),
+          Text(
+            nameandsurname,
+            style: GoogleFonts.openSans(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            email,
+            style: GoogleFonts.openSans(
+              fontSize: 16,
+            ),
+          ),
+          SizedBox(height: 32),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Abilities',
+                  style: GoogleFonts.openSans(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundColor: Colors.black54,
-                    child: Text(
-                      nameandsurname.isNotEmpty
-                          ? nameandsurname[0].toUpperCase()
-                          : '',
-                      style: TextStyle(fontSize: 40, color: Colors.white),
-                    ),
+                ),
+                SizedBox(height: 16),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 1.8,
                   ),
-                  SizedBox(height: 16),
-                  Text(
-                    '$nameandsurname',
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    email,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        'Abilities',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  _isEditing
-                      ? Column(
-                          children: [
-                            ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: abilities.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text('${abilities[index]['name']}'),
-                                  subtitle: Text(
-                                      'Rating: ${abilities[index]['rating']}'),
-                                );
-                              },
-                            ),
-                            SizedBox(height: 8),
-                            TextFormField(
-                              controller: _abilityNameController,
-                              decoration: InputDecoration(
-                                labelText: 'Ability Name',
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            TextFormField(
-                              controller: _abilityRatingController,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: 'Ability Rating (1-10)',
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  rating =
-                                      int.parse(_abilityRatingController.text);
-                                });
-                                updateAbilities();
-                              },
-                              child: Text('Update Abilities'),
-                            ),
-                            SizedBox(height: 8),
-                          ],
-                        )
-                      : Column(
-                          children: abilities
-                              .map(
-                                (ability) => ListTile(
-                                  title: Text(ability['name']),
-                                  subtitle:
-                                      Text('Rating: ${ability['rating']}'),
-                                ),
-                              )
-                              .toList(),
-                        ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _isEditing = !_isEditing;
-                      });
-                    },
-                    child:
-                        Text(_isEditing ? 'Cancel Editing' : 'Edit Abilities'),
-                  ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Add New Ability'),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextFormField(
-                                controller: _abilityNameController,
-                                decoration: InputDecoration(
-                                  labelText: 'Ability Name',
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              TextFormField(
-                                controller: _abilityRatingController,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  labelText: 'Ability Rating (1-10)',
-                                ),
-                              ),
-                            ],
-                          ),
-                          actions: [
-                            ElevatedButton(
-                              onPressed: () {
-                                addAbility();
-                                Navigator.pop(context);
-                              },
-                              child: Text('Add'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text('Cancel'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    child: Text('Add New Ability'),
-                  ),
-                  SizedBox(height: 32),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SettingPageUI(),
-                        ),
-                      );
-                    },
-                    child: Text('Go to Settings'),
-                  ),
-                ],
-              ),
+                  itemCount: abilities.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == abilities.length) {
+                      return _buildAddAbilityCard();
+                    } else {
+                      final ability = abilities[index];
+                      return _buildAbilityCard(ability, index);
+                    }
+                  },
+                ),
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAbilityCard(Map<String, dynamic> ability, int index) {
+    return Container(
+      height: 150,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 1,
+            blurRadius: 2,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  ability['name'],
+                  style: GoogleFonts.openSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Rating: ${ability['rating']}',
+                  style: GoogleFonts.openSans(
+                    fontSize: 14,
+                  ),
+                ),
+                SizedBox(height: 8),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                deleteAbility(index);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddAbilityCard() {
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Add Ability'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: _abilityNameController,
+                    decoration: InputDecoration(
+                      labelText: 'Ability Name',
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Slider(
+                    value: (rating ?? 0).toDouble(),
+                    min: 0,
+                    max: 10,
+                    divisions: 10,
+                    onChanged: (value) {
+                      setState(() {
+                        rating = value.toInt();
+                      });
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    child: Text('Add'),
+                    onPressed: () {
+                      addAbility();
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 1,
+              blurRadius: 2,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Icon(
+          Icons.add,
+          size: 48,
+        ),
       ),
     );
   }

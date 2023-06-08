@@ -79,7 +79,8 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProviderData = Provider.of<ThemeProvider>(context); // Sağlayıcı sınıfının adını güncelledim
+    final themeProviderData = Provider.of<ThemeProvider>(
+        context); // Sağlayıcı sınıfının adını güncelledim
     final items = <Widget>[
       const Icon(
         Icons.home,
@@ -157,9 +158,12 @@ class _MainPageState extends State<MainPage> {
             ),
             child: Consumer<ThemeProvider>(
               builder: (context, themeProviderData, _) => BottomNavigationBar(
-                backgroundColor: themeProviderData.getTheme().scaffoldBackgroundColor,
-                selectedItemColor: themeProviderData.getTheme().textTheme.bodyText1?.color,
-                unselectedItemColor: themeProviderData.getTheme().textTheme.bodyText2?.color,
+                backgroundColor:
+                    themeProviderData.getTheme().scaffoldBackgroundColor,
+                selectedItemColor:
+                    themeProviderData.getTheme().textTheme.bodyText1?.color,
+                unselectedItemColor:
+                    themeProviderData.getTheme().textTheme.bodyText2?.color,
                 currentIndex: index,
                 items: items.map((Widget item) {
                   return BottomNavigationBarItem(

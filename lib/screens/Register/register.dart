@@ -1,3 +1,4 @@
+import 'package:WorkWise/screens/MainPage/main_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -83,15 +84,14 @@ class _RegisterPageState extends State<RegisterPage>
   final settings = mysql.ConnectionSettings(
     host: '213.238.183.81',
     port: 3306,
-    user: 'httpdegm_hudai',
-    password: ',sPE[gd^hbl1',
+    user: 'httpdegm_melike',
+    password: 'A}c74e&QAI[x',
     db: 'httpdegm_database1',
   );
 
   Future<void> register() async {
-    try {
-      final connect = await mysql.MySqlConnection.connect(settings);
-      await connect.query(
+    final connect = await mysql.MySqlConnection.connect(settings);
+    await connect.query(
         '''INSERT INTO User (nameandsurname, age, email, password, freelanceroremployer) VALUES (?, ?, ?, ?,?)''',
         [
           _nameController.text,
@@ -99,32 +99,13 @@ class _RegisterPageState extends State<RegisterPage>
           _emailController.text,
           _passwordController.text,
           _selectedOption
-        ],
-      );
-      await connect.close();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('You have successfully registered!'),
-        ),
-      );
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return OnboardingScreen();
-          },
-        ),
-      );
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('An error occurred during registration.'),
-        ),
-      );
-      print('Registration Error: $error');
-    }
+        ]);
+    await connect.close();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('You have successfully registered!'),
+      ),
+    );
   }
 
   bool passwordConfirmed() {
@@ -418,6 +399,14 @@ class _RegisterPageState extends State<RegisterPage>
                       child: GestureDetector(
                         onTap: () async {
                           register();
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) {
+                          //       return OnboardingScreen();
+                          //     },
+                          //   ),
+                          // );
                         },
                         child: Container(
                           padding: EdgeInsets.all(12),

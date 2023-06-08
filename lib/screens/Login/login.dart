@@ -7,6 +7,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../MainPage/main_page.dart';
 import 'forgot_password.dart';
 import '../register/register.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
+
+String hashPassword(String password) {
+  var bytes = utf8.encode(password); // Şifreyi byte dizisine dönüştürme
+  var hashedPassword = sha256.convert(bytes); // SHA-256 algoritmasıyla hashleme
+  return hashedPassword.toString();
+}
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/login-page';
@@ -41,13 +49,13 @@ class _LoginPageState extends State<LoginPage>
   );
 
   Future<bool> login() async {
+    print(hashPassword(_passwordController.text));
     final connect = await MySqlConnection.connect(settings);
 
     final results = await connect.query(
       'SELECT * FROM User WHERE email = ? AND password = ?',
-      [_emailController.text, _passwordController.text],
+      [_emailController.text, hashPassword(_passwordController.text)],
     );
-
     await connect.close();
 
     if (results.isNotEmpty) {
@@ -116,7 +124,7 @@ class _LoginPageState extends State<LoginPage>
               child: Container(
                 margin: EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white54,
+                  color: Colors.white70,
                   borderRadius: BorderRadius.circular(35),
                 ),
                 child: Center(
