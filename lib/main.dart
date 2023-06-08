@@ -8,7 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     ChangeNotifierProvider(
-      create: (context) => themeProvider(ThemeData(brightness: Brightness.light, primarySwatch: Colors.cyan)),
+      create: (context) => ThemeProvider(ThemeData(brightness: Brightness.light, primarySwatch: Colors.cyan)),
       child:  MyApp(key: UniqueKey(),),
     ),
   );
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProviderData = Provider.of<themeProvider>(context);
+    final themeProviderData = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',

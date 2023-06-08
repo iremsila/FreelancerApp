@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-class themeProvider with ChangeNotifier {
+
+class ThemeProvider with ChangeNotifier {
   ThemeData _themeData;
-  themeProvider(this._themeData);
+  ThemeProvider(this._themeData);
   getTheme() => _themeData;
 
 

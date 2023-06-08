@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:WorkWise/screens/MainPage/Jobs/upload_job.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,9 +20,12 @@ class JobScreen extends StatefulWidget {
   State<JobScreen> createState() => _JobScreenState();
 }
 
-class _JobScreenState extends State<JobScreen> with SingleTickerProviderStateMixin {
+class _JobScreenState extends State<JobScreen>
+    with SingleTickerProviderStateMixin {
   List<Map<String, dynamic>> jobs = [];
   String userRole = '';
+  StreamController<List<Map<String, dynamic>>> _streamController =
+      StreamController<List<Map<String, dynamic>>>();
 
   @override
   void initState() {
@@ -34,12 +39,20 @@ class _JobScreenState extends State<JobScreen> with SingleTickerProviderStateMix
       setState(() {
         jobs = data;
       });
+      _streamController.add(jobs);
     });
+  }
+
+  @override
+  void dispose() {
+    _streamController.close();
+    super.dispose();
   }
 
   Future<List<Map<String, dynamic>>> fetchData() async {
     var conn = await getConnection();
-    var results = await conn.query('SELECT * FROM upload_job1 ORDER BY date_posted ASC');
+    var results =
+        await conn.query('SELECT * FROM upload_job1 ORDER BY date_posted ASC');
     await conn.close();
     return results.map((resultRow) {
       return Map<String, dynamic>.from(resultRow.fields);
@@ -95,12 +108,13 @@ class _JobScreenState extends State<JobScreen> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    final themeProviderData = Provider.of<themeProvider>(context);
+    final themeProviderData = Provider.of<ThemeProvider>(context);
     final ThemeData appTheme = themeProviderData.getTheme();
-    final Color appBarBackgroundColor =
-    appTheme.brightness == Brightness.light ? Colors.white : appTheme.scaffoldBackgroundColor;
+    final Color appBarBackgroundColor = appTheme.brightness == Brightness.light
+        ? Colors.white
+        : appTheme.scaffoldBackgroundColor;
     final Color appBarForegroundColor =
-    appTheme.brightness == Brightness.light ? Colors.black : Colors.white;
+        appTheme.brightness == Brightness.light ? Colors.black : Colors.white;
     final TextStyle titleStyle = TextStyle(
       fontSize: 30,
       fontWeight: FontWeight.bold,
@@ -110,7 +124,8 @@ class _JobScreenState extends State<JobScreen> with SingleTickerProviderStateMix
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        systemOverlayStyle: const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        systemOverlayStyle:
+            const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
         backgroundColor: appBarBackgroundColor,
         title: Text(
           'WorkWise',
@@ -130,7 +145,8 @@ class _JobScreenState extends State<JobScreen> with SingleTickerProviderStateMix
                 },
                 child: Text(
                   "POST JOB NOW",
-                  style: GoogleFonts.openSans(fontSize: 15, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.openSans(
+                      fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 style: TextButton.styleFrom(
                   elevation: 5,
@@ -168,7 +184,8 @@ class _JobScreenState extends State<JobScreen> with SingleTickerProviderStateMix
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CategoriesPage()),
+                        MaterialPageRoute(
+                            builder: (context) => CategoriesPage()),
                       );
                     },
                     child: Row(
@@ -218,20 +235,46 @@ class _JobScreenState extends State<JobScreen> with SingleTickerProviderStateMix
           ),
           SizedBox(height: 10),
           Expanded(
-            child: ListView.builder(
-              itemCount: jobs.length,
-              itemBuilder: (context, index) {
-                final job = jobs[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => JobDetailPage(job),
-                      ),
-                    );
+            child: StreamBuilder<List<Map<String, dynamic>>>(
+              stream: _streamController.stream,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Hata: ${snapshot.error}');
+                }
+
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                final newData = snapshot.data!;
+
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    final data = await fetchData();
+                    setState(() {
+                      jobs = data;
+                    });
+                    _streamController.add(jobs);
                   },
-                  child: JobCard2(job: job),
+                  child: ListView.builder(
+                    itemCount: newData.length,
+                    itemBuilder: (context, index) {
+                      final job = newData[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => JobDetailPage(job),
+                            ),
+                          );
+                        },
+                        child: JobCard2(job: job),
+                      );
+                    },
+                  ),
                 );
               },
             ),

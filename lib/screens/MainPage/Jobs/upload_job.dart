@@ -3,8 +3,8 @@ import 'package:mysql1/mysql1.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../provider/theme_provider.dart';
+
 
 class UploadJobNow extends StatefulWidget {
   @override
@@ -123,7 +123,7 @@ class _UploadJobNow extends State<UploadJobNow> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProviderData = Provider.of<themeProvider>(context);
+    final themeProviderData = Provider.of<ThemeProvider>(context);
     return Scaffold(
       backgroundColor: themeProviderData.getTheme().scaffoldBackgroundColor,
       appBar: AppBar(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,33 +7,30 @@ import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constans/colors.dart';
 
-class JobDetailPage extends StatelessWidget {
-  final Map<String, dynamic> jobData;
+class JobDetailPage extends StatefulWidget {
+  late final Map<String, dynamic> jobData;
 
   JobDetailPage(this.jobData);
 
-  Future<MySqlConnection> getConnection() async {
-    final settings = ConnectionSettings(
-      host: '213.238.183.81',
-      port: 3306,
-      user: 'httpdegm_hudai',
-      password: ',sPE[gd^hbl1',
-      db: 'httpdegm_database1',
-    );
-    return await MySqlConnection.connect(settings);
+  @override
+  _JobDetailPageState createState() => _JobDetailPageState();
+}
+
+class _JobDetailPageState extends State<JobDetailPage> {
+  int _applicationCount = 0;
+  StreamController<int> _applicationCountController = StreamController<int>();
+  Stream<int> get applicationCountStream => _applicationCountController.stream;
+
+  int get applicationCount => _applicationCount;
+  set applicationCount(int value) {
+    _applicationCount = value;
+    _applicationCountController.add(value);
   }
 
-  Future<String> getApplicantName(int userId, MySqlConnection conn) async {
-    final result = await conn.query(
-      'SELECT nameandsurname FROM User WHERE id = ?',
-      [userId],
-    );
-
-    if (result.isNotEmpty) {
-      return result.first['nameandsurname'];
-    } else {
-      return 'Unknown'; // Default name if user is not found
-    }
+  @override
+  void initState() {
+    super.initState();
+    applicationCount = widget.jobData['application_count'] as int? ?? 0;
   }
 
   Future<void> applyJob(BuildContext context) async {
@@ -72,7 +70,7 @@ class JobDetailPage extends StatelessWidget {
       // Kullanıcının aynı işe başvurup başvurmadığını kontrol et
       final applicationResults = await conn.query(
         'SELECT * FROM job_applications WHERE freelancer_id = ? AND job_id = ?',
-        [userId, jobData['id']],
+        [userId, widget.jobData['id']],
       );
 
       if (applicationResults.isNotEmpty) {
@@ -98,19 +96,15 @@ class JobDetailPage extends StatelessWidget {
       // Başvuru kaydını ekle
       await conn.query(
         'INSERT INTO job_applications (freelancer_id, job_id) VALUES (?, ?)',
-        [userId, jobData['id']],
+        [userId, widget.jobData['id']],
       );
 
-      await conn.query(
-        'UPDATE upload_job1 SET application_count = application_count + 1 WHERE id = ?',
-        [jobData['id']],
-      );
       String applicantName = await getApplicantName(userId, conn);
-      String jobTitle = jobData['job_title'];
+      String jobTitle = widget.jobData['job_title'];
       String message = '$applicantName has applied for $jobTitle';
       await conn.query(
         'INSERT INTO notifications (sender_id, job_id, is_read, receiver_id, message) VALUES (?, ?, ?, ?, ?)',
-        [userId, jobData['id'], 0, jobData['user_id'], message],
+        [userId, widget.jobData['id'], 0, widget.jobData['user_id'], message],
       );
 
       final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -119,10 +113,59 @@ class JobDetailPage extends StatelessWidget {
           content: Text('Your application has been successfully completed!'),
         ),
       );
+
+      // Increase the applicationCount by 1
+      setState(() {
+        applicationCount++;
+      });
+      _applicationCountController.add(applicationCount);
+
+      // Güncellenen application_count değerini veritabanına kaydet
+      await conn.query(
+        'UPDATE upload_job1 SET application_count = ? WHERE id = ?',
+        [applicationCount, widget.jobData['id']],
+      );
+
+      // Güncellenen job verilerini yeniden getir
+      final updatedJobResults = await conn.query(
+        'SELECT * FROM upload_job1 WHERE id = ?',
+        [widget.jobData['id']],
+      );
+
+      if (updatedJobResults.isNotEmpty) {
+        setState(() {
+          widget.jobData = updatedJobResults.first.fields;
+        });
+      }
     } catch (e) {
       print('An error occurred during the application: $e');
     } finally {
       await conn.close();
+    }
+  }
+
+
+  Future<MySqlConnection> getConnection() async {
+    final settings = ConnectionSettings(
+      host: '213.238.183.81',
+      port: 3306,
+      user: 'httpdegm_hudai',
+      password: ',sPE[gd^hbl1',
+      db: 'httpdegm_database1',
+    );
+    return await MySqlConnection.connect(settings);
+  }
+
+  Future<String> getApplicantName(int userId, MySqlConnection conn) async {
+    final result = await conn.query(
+      'SELECT nameandsurname FROM User WHERE id = ?',
+      [userId],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first['nameandsurname'];
+    } else {
+      return 'Unknown'; // Default name if user is not found
     }
   }
 
@@ -165,7 +208,7 @@ class JobDetailPage extends StatelessWidget {
                 height: 55,
                 width: 55,
                 decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(25)),
+                BoxDecoration(borderRadius: BorderRadius.circular(25)),
                 child: Icon(
                   Icons.arrow_back_ios,
                   size: 20,
@@ -209,7 +252,7 @@ class JobDetailPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  jobData['job_title'],
+                  widget.jobData['job_title'],
                   style: GoogleFonts.openSans(
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),
@@ -217,9 +260,9 @@ class JobDetailPage extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  jobData['location'],
+                  widget.jobData['location'],
                   style:
-                      GoogleFonts.openSans(fontSize: 15, color: SecondaryText),
+                  GoogleFonts.openSans(fontSize: 15, color: SecondaryText),
                 ),
                 const SizedBox(
                   height: 15,
@@ -230,7 +273,7 @@ class JobDetailPage extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      jobData['category'],
+                      widget.jobData['category'],
                       style: GoogleFonts.openSans(
                           fontSize: 15, fontWeight: FontWeight.bold),
                     ),
@@ -239,7 +282,7 @@ class JobDetailPage extends StatelessWidget {
                       children: [
                         Text(
                           DateFormat('yyyy-MM-dd')
-                              .format(jobData['date_posted']),
+                              .format(widget.jobData['date_posted']),
                           style: GoogleFonts.openSans(
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
@@ -267,7 +310,7 @@ class JobDetailPage extends StatelessWidget {
                 Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    jobData['description'],
+                    widget.jobData['description'],
                     style: GoogleFonts.openSans(
                         fontSize: 15, color: SecondaryText),
                   ),
@@ -296,12 +339,16 @@ class JobDetailPage extends StatelessWidget {
                           size: 30,
                         ),
                         const SizedBox(width: 5),
-                        Text(
-                          jobData['application_count'] != null
-                              ? "${jobData['application_count']}"
-                              : "0",
-                          style: GoogleFonts.openSans(
-                              fontSize: 20, color: SecondaryText),
+                        StreamBuilder<int>(
+                          stream: applicationCountStream,
+                          initialData: applicationCount,
+                          builder: (context, snapshot) {
+                            return Text(
+                              snapshot.data.toString(),
+                              style: GoogleFonts.openSans(
+                                  fontSize: 20, color: SecondaryText),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -313,7 +360,7 @@ class JobDetailPage extends StatelessWidget {
                 Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    '\$${jobData['budget']}',
+                    '\$${widget.jobData['budget']}',
                     style: GoogleFonts.openSans(fontSize: 15),
                   ),
                 ),
@@ -345,3 +392,4 @@ class JobDetailPage extends StatelessWidget {
     );
   }
 }
+

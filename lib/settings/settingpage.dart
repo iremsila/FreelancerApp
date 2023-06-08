@@ -104,7 +104,7 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (context) => themeProvider(ThemeData.dark())),
+            create: (context) => ThemeProvider(ThemeData.dark())),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -195,7 +195,7 @@ class _SettingPageUIState extends State<SettingPageUI> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<themeProvider>(context);
+    final theme = Provider.of<ThemeProvider>(context);
     final TextStyle titleStylew = TextStyle(
       fontSize: 25,
       fontWeight: FontWeight.bold,

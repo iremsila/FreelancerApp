@@ -171,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProviderData = Provider.of<themeProvider>(context);
+    final themeProviderData = Provider.of<ThemeProvider>(context);
     final TextStyle titleStyle = TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.bold,

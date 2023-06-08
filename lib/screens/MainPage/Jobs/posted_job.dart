@@ -87,7 +87,7 @@ class _JobListScreenState extends State<JobListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<themeProvider>(context);
+    final theme = Provider.of<ThemeProvider>(context);
     String title = '';
     if (userRole == 'Employer') {
       title = 'Jobs You Posted';
@@ -95,7 +95,7 @@ class _JobListScreenState extends State<JobListScreen> {
       title = 'Jobs You Applied';
     }
 
-    final themeProviderData = Provider.of<themeProvider>(context);
+    final themeProviderData = Provider.of<ThemeProvider>(context);
     final bool isLightTheme = themeProviderData.getTheme().brightness == Brightness.light;
     final Color appBarTextColor = isLightTheme ? Colors.black : Colors.white;
     final Color appBarBackgroundColor = themeProviderData.getTheme().scaffoldBackgroundColor;
