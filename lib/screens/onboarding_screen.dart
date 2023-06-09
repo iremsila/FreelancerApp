@@ -1,4 +1,5 @@
 import 'package:WorkWise/screens/Login/login.dart';
+import 'package:WorkWise/screens/MainPage/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -53,7 +54,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return LoginPage(showRegisterPage: () {  },);
+                              return const MainPage();
                             },
                           ),
                         );

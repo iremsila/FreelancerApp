@@ -17,7 +17,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String nameandsurname = '';
   String email = '';
-  double rating = 5.0;
+  double rating = 0.0;
   List<Map<String, dynamic>> abilities = [];
   TextEditingController _abilityNameController = TextEditingController();
   TextEditingController _abilityRatingController = TextEditingController();
@@ -262,69 +262,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 16),
-          CircleAvatar(
-            radius: 50,
-            backgroundColor: Colors.black54,
-            child: Text(
-              nameandsurname.isNotEmpty ? nameandsurname[0].toUpperCase() : '',
-              style: TextStyle(fontSize: 40, color: Colors.white),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 16),
+            CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.black54,
+              child: Text(
+                nameandsurname.isNotEmpty
+                    ? nameandsurname[0].toUpperCase()
+                    : '',
+                style: TextStyle(fontSize: 40, color: Colors.white),
+              ),
             ),
-          ),
-          SizedBox(height: 16),
-          Text(
-            nameandsurname,
-            style: GoogleFonts.openSans(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+            SizedBox(height: 16),
+            Text(
+              nameandsurname,
+              style: GoogleFonts.openSans(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            email,
-            style: GoogleFonts.openSans(
-              fontSize: 16,
+            SizedBox(height: 8),
+            Text(
+              email,
+              style: GoogleFonts.openSans(
+                fontSize: 16,
+              ),
             ),
-          ),
-          SizedBox(height: 32),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Abilities',
-                  style: GoogleFonts.openSans(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+            SizedBox(height: 32),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Abilities',
+                    style: GoogleFonts.openSans(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                SizedBox(height: 16),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 1.8,
+                  SizedBox(height: 16),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 1.8,
+                    ),
+                    itemCount: abilities.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == abilities.length) {
+                        return _buildAddAbilityCard();
+                      } else {
+                        final ability = abilities[index];
+                        return _buildAbilityCard(ability, index);
+                      }
+                    },
                   ),
-                  itemCount: abilities.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == abilities.length) {
-                      return _buildAddAbilityCard();
-                    } else {
-                      final ability = abilities[index];
-                      return _buildAbilityCard(ability, index);
-                    }
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -389,39 +393,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
         showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
-              title: Text('Add Ability'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: _abilityNameController,
-                    decoration: InputDecoration(
-                      labelText: 'Ability Name',
-                    ),
+            return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return AlertDialog(
+                  title: Text('Add Ability'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: _abilityNameController,
+                        decoration: InputDecoration(
+                          labelText: 'Ability Name',
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Slider(
+                        value: rating,
+                        min: 0,
+                        max: 10,
+                        divisions: 10,
+                        onChanged: (double value) {
+                          setState(() {
+                            rating = value;
+                          });
+                        },
+                      ),
+                      Text(
+                        rating.toString(),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton(
+                        child: Text('Add'),
+                        onPressed: () {
+                          addAbility();
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 16),
-                  Slider(
-                    value: rating.toDouble(), // Convert 'rating' to 'double'
-                    min: 0,
-                    max: 10,
-                    divisions: 10,
-                    onChanged: (double value) {
-                      setState(() {
-                        rating = value; // Convert 'value' to 'int'
-                      });
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    child: Text('Add'),
-                    onPressed: () {
-                      addAbility();
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
+                );
+              },
             );
           },
         );

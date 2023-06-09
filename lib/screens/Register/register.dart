@@ -427,7 +427,8 @@ class _RegisterPageState extends State<RegisterPage>
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const MainPage()),
+                                  builder: (context) =>
+                                      const OnboardingScreen()),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(

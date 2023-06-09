@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:provider/provider.dart';
+import 'package:settings_ui/settings_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../provider/theme_provider.dart';
 import '../screens/Login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ChangePassword.dart';
-
 
 void settingpage() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +38,6 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _emailController = TextEditingController();
-
 
   @override
   void dispose() {
@@ -98,7 +97,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -196,11 +194,14 @@ class _SettingPageUIState extends State<SettingPageUI> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context);
-    final TextStyle titleStylew = TextStyle(
+    final TextStyle titleStyle = TextStyle(
       fontSize: 25,
       fontWeight: FontWeight.bold,
-      color: theme.getTheme().brightness == Brightness.light ? Colors.black : Colors.white,
+      color: theme.getTheme().brightness == Brightness.light
+          ? Colors.black
+          : Colors.white,
     );
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: theme.getTheme(),
@@ -215,223 +216,122 @@ class _SettingPageUIState extends State<SettingPageUI> {
             icon: Icon(Icons.arrow_back),
           ),
         ),
-        body: Container(
-          margin: EdgeInsets.symmetric(horizontal: 3),
-          padding: const EdgeInsets.all(10),
-          child: ListView(
-            children: [
-              SizedBox(height: 40),
-              Row(
-                children: [
-                  Icon(
-                    Icons.person,
-                    color: Colors.blue,
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    "Profile",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Divider(height: 20, thickness: 1),
-              SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return PasswordChangePage();
-                      },
-                    ),
-                  );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 3,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    " Change Password ",
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 15),
-              Row(
-                children: [
-                  Icon(
-                    Icons.favorite_border,
-                    color: Colors.blue,
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    "Suggestions and Opinions",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Divider(height: 20, thickness: 1),
-              SizedBox(height: 25),
-              TextButton(
-                onPressed: () {
-                  customLaunch("mailto:helloworld@gmail.com");
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 3,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    "     E mail     ",
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 25),
-              TextButton(
-                onPressed: () {
-                  customLaunch("tel:05071931635");
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 3,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    " Telephone  ",
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 40),
-              Row(
-                children: [
-                  Icon(
-                    Icons.wb_sunny_outlined,
-                    color: Colors.blue,
-                  ),
-                  Icon(
-                    Icons.nights_stay,
-                    color: Colors.blue,
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    "Dark Mode",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Divider(height: 20, thickness: 1),
-              SizedBox(height: 10),
-              IconButton(
-                onPressed: () => theme.setTheme(ThemeData.dark()),
-                icon: Icon(Icons.nights_stay),
-              ),
-              IconButton(
-                onPressed: () => theme.setTheme(ThemeData.light()),
-                icon: Icon(Icons.wb_sunny),
-              ),
-              SizedBox(height: 10),
-              TextButton(
-                onPressed: () async {
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  int userId = prefs.getInt('userId') ?? 0;
-                  deleteUser(userId);
-                  await deleteUser(userId);
-                  bool isDelete = true;
-                  if (isDelete) {
+        body: SettingsList(
+          sections: [
+            SettingsSection(
+              title: Text('Profile'),
+              tiles: [
+                SettingsTile(
+                  title: Text('Change Password', style: titleStyle),
+                  leading: Icon(Icons.lock),
+                  onPressed: (BuildContext context) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => LoginPage(
-                          showRegisterPage: () {},
-                        ),
+                        builder: (context) {
+                          return PasswordChangePage();
+                        },
                       ),
                     );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Account Deleted'),
+                  },
+                ),
+              ],
+            ),
+            SettingsSection(
+              title: Text('Suggestions and Opinions'),
+              tiles: [
+                SettingsTile(
+                  title: Text('E-mail', style: titleStyle),
+                  leading: Icon(Icons.mail),
+                  onPressed: (BuildContext context) {
+                    customLaunch("mailto:helloworld@gmail.com");
+                  },
+                ),
+                SettingsTile(
+                  title: Text('Telephone', style: titleStyle),
+                  leading: Icon(Icons.phone),
+                  onPressed: (BuildContext context) {
+                    customLaunch("tel:05071931635");
+                  },
+                ),
+              ],
+            ),
+            SettingsSection(
+              tiles: [
+                SettingsTile(
+                  title: Text('Dark Mode', style: titleStyle),
+                  leading: Row(
+                    children: [
+                      Icon(
+                        Icons.wb_sunny_outlined,
+                        color: Colors.blue,
                       ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Account Colud Not Delete'),
-                      ),
-                    );
-                  }
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 3,
-                        offset: Offset(0, 3),
+                      SizedBox(width: 10),
+                      Text(
+                        "Dark Mode",
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
-                  child: Text(
-                    "    Delete Account !    ",
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
+                  trailing: Switch(
+                    value: theme.getTheme().brightness == Brightness.dark,
+                    onChanged: (bool value) {
+                      if (value) {
+                        theme.setTheme(ThemeData.dark());
+                      } else {
+                        theme.setTheme(ThemeData.light());
+                      }
+                    },
                   ),
                 ),
-              ),
-              SizedBox(height: 50),
-              Center(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  onPressed: () {
+              ],
+            ),
+            SettingsSection(
+              title: Text('Delete Account'),
+              tiles: [
+                SettingsTile(
+                  title: Text('Delete Account', style: titleStyle),
+                  leading: Icon(Icons.delete),
+                  onPressed: (BuildContext context) async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    int userId = prefs.getInt('userId') ?? 0;
+                    deleteUser(userId);
+                    await deleteUser(userId);
+                    bool isDelete = true;
+                    if (isDelete) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginPage(
+                            showRegisterPage: () {},
+                          ),
+                        ),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Account Deleted'),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Account Could Not Be Deleted'),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+            SettingsSection(
+              tiles: [
+                SettingsTile(
+                  title: Text('SIGN OUT',
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                  onPressed: (BuildContext context) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -441,192 +341,12 @@ class _SettingPageUIState extends State<SettingPageUI> {
                       ),
                     );
                   },
-                  child:Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 3,
-                          blurRadius: 3,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      "SIGN OUT",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-
-  Padding buildNotificationOption(
-      String title, bool value, Function onChangeMethod) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title,
-              style: TextStyle(
-                  fontSize: 21,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[600])),
-          Transform.scale(
-            scale: 0.7,
-            child: CupertinoSwitch(
-              activeColor: Colors.blue,
-              trackColor: Colors.grey,
-              value: value,
-              onChanged: (bool newValue) {
-                onChangeMethod(newValue);
-              },
+              ],
             ),
-          )
-        ],
-      ),
-    );
-  }
-
-  GestureDetector buildLanguageOption(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // Dil ayarları sayfasını açmak için gerekli işlemleri burada yapın
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("Dil Seçimi",
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[600])),
-            Icon(Icons.arrow_forward, color: Colors.grey[600]),
           ],
         ),
       ),
     );
   }
-
-  GestureDetector buildRegionOption(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Select Region'),
-              content: SingleChildScrollView(
-                child: ListBody(
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                        // Perform necessary actions for Turkey selection
-                        print('Turkey selected');
-                      },
-                      child: Text('Turkey'),
-                    ),
-                    SizedBox(height: 10),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                        // Perform necessary actions for Germany selection
-                        print('Germany selected');
-                      },
-                      child: Text('Germany'),
-                    ),
-                    SizedBox(height: 10),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                        // Perform necessary actions for France selection
-                        print('France selected');
-                      },
-                      child: Text('France'),
-                    ),
-                    SizedBox(height: 10),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                        // Perform necessary actions for USA selection
-                        print('USA selected');
-                      },
-                      child: Text('United States'),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-      child: Container(
-        padding: EdgeInsets.all(10),
-        color: Colors.blue,
-        child: Text(
-          "Region Settings",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-GestureDetector buildAccountOption(BuildContext context, String title) {
-  return GestureDetector(
-    onTap: () {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(title),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [Text("Option1"), Text("Option2")],
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text("Close"))
-              ],
-            );
-          });
-    },
-    child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[600])),
-          Icon(Icons.arrow_forward, color: Colors.grey[600]),
-        ],
-      ),
-    ),
-  );
 }

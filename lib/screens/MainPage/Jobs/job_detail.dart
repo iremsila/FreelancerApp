@@ -270,7 +270,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
               final Color appBarTextColor =
                   isLightTheme ? Colors.black : Colors.white;
               final Color appBarBackgroundColor =
-                  themeProviderData.getTheme().scaffoldBackgroundColor;
+                  isLightTheme ? Colors.black : Colors.white;
               final Color textColor2 =
                   isLightTheme ? Colors.black : Colors.white;
 
@@ -477,7 +477,6 @@ class _JobDetailPageState extends State<JobDetailPage> {
                                 color: textColor2,
                               ),
                             ),
-                            const SizedBox(height: 10),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
@@ -486,7 +485,9 @@ class _JobDetailPageState extends State<JobDetailPage> {
                                 return ListTile(
                                   title: Text(
                                     comments[index],
-                                    style: TextStyle(color: textColor2),
+                                    style: TextStyle(
+                                        color: textColor2,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   subtitle: Text(
                                     comments[index],
@@ -495,26 +496,34 @@ class _JobDetailPageState extends State<JobDetailPage> {
                                 );
                               },
                             ),
-                            const SizedBox(height: 10),
                             TextField(
                               controller: commentController,
                               style: TextStyle(color: textColor2),
                               decoration: InputDecoration(
                                 hintText: 'Write a comment',
-                                border: OutlineInputBorder(),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors
+                                          .black), // Border rengini siyah yapar
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color:
+                                          Colors.black), // Focused border rengi
+                                ),
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    saveComment(commentController.text);
+                                    commentController.clear();
+                                  },
+                                  icon: Icon(
+                                    Icons.send,
+                                    color: textColor2,
+                                  ),
+                                ),
                               ),
                             ),
                             const SizedBox(height: 10),
-                            ElevatedButton(
-                              onPressed: () {
-                                saveComment(commentController.text);
-                                commentController.clear();
-                              },
-                              child: Text(
-                                'Submit',
-                                style: TextStyle(color: textColor2),
-                              ),
-                            ),
                           ],
                         ),
                       ),
