@@ -255,7 +255,7 @@ class _SettingPageUIState extends State<SettingPageUI> {
                   title: Text('Telephone', style: titleStyle),
                   leading: Icon(Icons.phone),
                   onPressed: (BuildContext context) {
-                    customLaunch("tel:05071931635");
+                    customLaunch("tel:0123456789");
                   },
                 ),
               ],

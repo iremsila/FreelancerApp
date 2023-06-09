@@ -153,7 +153,9 @@ class PasswordChangePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProviderData = Provider.of<ThemeProvider>(context); // Sağlayıcı sınıfının adını güncelledim
+    final themeProviderData =
+    Provider.of<ThemeProvider>(context, listen: false);
+
     return Scaffold(
       backgroundColor: themeProviderData.getTheme().scaffoldBackgroundColor,
       appBar: AppBar(
