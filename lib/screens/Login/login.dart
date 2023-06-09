@@ -11,8 +11,8 @@ import 'package:crypto/crypto.dart';
 import 'dart:convert';
 
 String hashPassword(String password) {
-  var bytes = utf8.encode(password); // Şifreyi byte dizisine dönüştürme
-  var hashedPassword = sha256.convert(bytes); // SHA-256 algoritmasıyla hashleme
+  var bytes = utf8.encode(password);
+  var hashedPassword = sha256.convert(bytes);
   return hashedPassword.toString();
 }
 

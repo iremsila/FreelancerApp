@@ -19,18 +19,68 @@ class JobDetailPage extends StatefulWidget {
 class _JobDetailPageState extends State<JobDetailPage> {
   int _applicationCount = 0;
   StreamController<int> _applicationCountController = StreamController<int>();
+
   Stream<int> get applicationCountStream => _applicationCountController.stream;
 
   int get applicationCount => _applicationCount;
+
   set applicationCount(int value) {
     _applicationCount = value;
     _applicationCountController.add(value);
   }
 
+  TextEditingController commentController =
+      TextEditingController(); // Yorum girilen metni tutacak controller
+  List<String> comments = []; // Yorumların tutulduğu liste
+
   @override
   void initState() {
     super.initState();
     applicationCount = widget.jobData['application_count'] as int? ?? 0;
+    fetchComments();
+  }
+
+  Future<void> fetchComments() async {
+    final conn = await getConnection();
+
+    try {
+      final results = await conn.query(
+        'SELECT comment FROM job_comments WHERE job_id = ?',
+        [widget.jobData['id']],
+      );
+
+      List<String> fetchedComments = [];
+      for (var row in results) {
+        fetchedComments.add(row['comment']);
+      }
+
+      setState(() {
+        comments = fetchedComments;
+      });
+    } catch (e) {
+      print('An error occurred while fetching comments: $e');
+    } finally {
+      await conn.close();
+    }
+  }
+
+  Future<void> saveComment(String comment) async {
+    final conn = await getConnection();
+
+    try {
+      await conn.query(
+        'INSERT INTO job_comments (job_id, user_id, comment) VALUES (?, ?, ?)',
+        [widget.jobData['id'], widget.jobData['user_id'], comment],
+      );
+
+      setState(() {
+        comments.add(comment);
+      });
+    } catch (e) {
+      print('An error occurred while saving comment: $e');
+    } finally {
+      await conn.close();
+    }
   }
 
   Future<void> applyJob(BuildContext context) async {
@@ -144,7 +194,6 @@ class _JobDetailPageState extends State<JobDetailPage> {
     }
   }
 
-
   Future<MySqlConnection> getConnection() async {
     final settings = ConnectionSettings(
       host: '213.238.183.81',
@@ -208,7 +257,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
                 height: 55,
                 width: 55,
                 decoration:
-                BoxDecoration(borderRadius: BorderRadius.circular(25)),
+                    BoxDecoration(borderRadius: BorderRadius.circular(25)),
                 child: Icon(
                   Icons.arrow_back_ios,
                   size: 20,
@@ -220,7 +269,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
     );
   }
 
-  scroll() {
+  Widget scroll() {
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
       maxChildSize: 1,
@@ -262,7 +311,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
                 Text(
                   widget.jobData['location'],
                   style:
-                  GoogleFonts.openSans(fontSize: 15, color: SecondaryText),
+                      GoogleFonts.openSans(fontSize: 15, color: SecondaryText),
                 ),
                 const SizedBox(
                   height: 15,
@@ -384,6 +433,52 @@ class _JobDetailPageState extends State<JobDetailPage> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Comments',
+                        style: GoogleFonts.openSans(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: comments.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(comments[index]),
+                            subtitle: Text(comments[index]),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: commentController,
+                        decoration: InputDecoration(
+                          hintText: 'Write a comment',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          saveComment(commentController.text);
+                          commentController.clear();
+                        },
+                        child: Text('Submit'),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -392,4 +487,3 @@ class _JobDetailPageState extends State<JobDetailPage> {
     );
   }
 }
-
