@@ -10,7 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ChangePassword.dart';
 
-
 void settingpage() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -39,7 +38,6 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _emailController = TextEditingController();
-
 
   @override
   void dispose() {
@@ -199,7 +197,9 @@ class _SettingPageUIState extends State<SettingPageUI> {
     final TextStyle titleStyle = TextStyle(
       fontSize: 22,
       fontWeight: FontWeight.bold,
-      color: theme.getTheme().brightness == Brightness.light ? Colors.black : Colors.white,
+      color: theme.getTheme().brightness == Brightness.light
+          ? Colors.black
+          : Colors.white,
     );
 
     return MaterialApp(
@@ -219,9 +219,8 @@ class _SettingPageUIState extends State<SettingPageUI> {
         body: SettingsList(
           sections: [
             SettingsSection(
-              title: Text('Profile',style: TextStyle(
-                  fontWeight: FontWeight.w500,fontSize:17
-              )),
+              title: Text('Profile',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17)),
               tiles: [
                 SettingsTile(
                   title: Text('Change Password', style: titleStyle),
@@ -240,9 +239,8 @@ class _SettingPageUIState extends State<SettingPageUI> {
               ],
             ),
             SettingsSection(
-              title: Text('Suggestions and Opinions',style: TextStyle(
-                  fontWeight: FontWeight.w500,fontSize:17
-              )),
+              title: Text('Suggestions and Opinions',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17)),
               tiles: [
                 SettingsTile(
                   title: Text('E-mail', style: titleStyle),
@@ -255,15 +253,14 @@ class _SettingPageUIState extends State<SettingPageUI> {
                   title: Text('Telephone', style: titleStyle),
                   leading: Icon(Icons.phone),
                   onPressed: (BuildContext context) {
-                    customLaunch("tel:05071931635");
+                    customLaunch("tel:0123456789");
                   },
                 ),
               ],
             ),
             SettingsSection(
-              title: Text('Theme',style: TextStyle(
-                  fontWeight: FontWeight.w500,fontSize:17
-              )),
+              title: Text('Theme',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17)),
               tiles: [
                 SettingsTile(
                   title: Text('Dark Mode', style: titleStyle),
@@ -289,15 +286,15 @@ class _SettingPageUIState extends State<SettingPageUI> {
               ],
             ),
             SettingsSection(
-              title: Text('Delete Account',style: TextStyle(
-                  fontWeight: FontWeight.w500,fontSize:17
-              )),
+              title: Text('Delete Account',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17)),
               tiles: [
                 SettingsTile(
                   title: Text('Delete Account', style: titleStyle),
                   leading: Icon(Icons.delete),
                   onPressed: (BuildContext context) async {
-                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
                     int userId = prefs.getInt('userId') ?? 0;
                     deleteUser(userId);
                     await deleteUser(userId);
@@ -335,7 +332,8 @@ class _SettingPageUIState extends State<SettingPageUI> {
                       borderRadius: BorderRadius.circular(3),
                       color: Colors.grey.withOpacity(0.3),
                     ),
-                    padding: EdgeInsets.all(8), // Kutunun iç boşluğunu ayarlamak için padding kullanıyoruz
+                    padding: EdgeInsets.all(
+                        8), // Kutunun iç boşluğunu ayarlamak için padding kullanıyoruz
                     child: Center(
                       child: Text(
                         'SIGN OUT',
