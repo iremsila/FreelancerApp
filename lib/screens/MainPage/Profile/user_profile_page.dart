@@ -13,8 +13,9 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
-  bool isApproved = false;
   List<Map<String, dynamic>> abilities = [];
+  String applicationStatus = '';
+  String approvalMessage = '';
 
   Future<MySqlConnection> getConnection() async {
     final settings = new ConnectionSettings(
@@ -30,8 +31,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Future<List<Map<String, dynamic>>> fetchAbilities(int userId) async {
     final conn = await getConnection();
 
-    final results =
-    await conn.query('SELECT abilities, rating FROM profile WHERE user_id = ?', [userId]);
+    final results = await conn.query(
+        'SELECT abilities, rating FROM profile WHERE user_id = ?', [userId]);
 
     final List<Map<String, dynamic>> fetchedAbilities = [];
     for (var row in results) {
@@ -51,14 +52,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
     try {
       final results = await conn.query(
-        'SELECT is_approved FROM job_applications WHERE job_id = ? AND freelancer_id = ?',
+        'SELECT application_status FROM job_applications WHERE job_id = ? AND freelancer_id = ?',
         [widget.job['id'], widget.user['id']],
       );
 
       if (results.isNotEmpty) {
         final application = results.first.fields;
         setState(() {
-          isApproved = application['is_approved'] == 1;
+          applicationStatus = application['application_status'];
         });
       }
     } catch (e) {
@@ -68,40 +69,48 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
   }
 
-  Future<void> approveApplication() async {
+  Future<void> updateApplicationStatus(String newStatus) async {
     final conn = await getConnection();
 
     try {
       await conn.query(
-        'UPDATE job_applications SET is_approved = 1 WHERE job_id = ? AND freelancer_id = ?',
-        [widget.job['id'], widget.user['id']],
+        'UPDATE job_applications SET application_status = ? WHERE job_id = ? AND freelancer_id = ?',
+        [newStatus, widget.job['id'], widget.user['id']],
       );
-      print('Application approved successfully!');
-      setState(() {
-        isApproved = true;
-      });
-      sendNotification();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Job approved successfully'),
-        ),
-      );
+      setState(() {
+        applicationStatus = newStatus;
+      });
     } catch (e) {
-      print('An error occurred while approving the application: $e');
+      print('An error occurred while updating application status: $e');
     } finally {
       await conn.close();
     }
   }
 
-  Future<void> sendNotification() async {
+  Future<void> approveApplication() async {
+    if (applicationStatus != 'Approved' && applicationStatus != 'Rejected') {
+      await updateApplicationStatus('Approved');
+      saveApprovalMessage('You have already approved this application.');
+      sendNotification(
+          'Your application for the job ${widget.job['job_title']} has been approved. Our team will contact you soon.');
+    }
+  }
+
+  Future<void> rejectApplication() async {
+    if (applicationStatus != 'Approved' && applicationStatus != 'Rejected') {
+      await updateApplicationStatus('Rejected');
+      saveApprovalMessage('You have already rejected this application.');
+      sendNotification(
+          'Your application for the job ${widget.job['job_title']} has been rejected.');
+    }
+  }
+
+  Future<void> sendNotification(String message) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int userId = prefs.getInt('userId') ?? 0;
 
     var conn = await getConnection();
-    String jobTitle = widget.job['job_title'];
-    String message =
-        'Your application for the job $jobTitle has been approved. Our team will contact you soon.';
     await conn.query(
       'INSERT INTO notifications (sender_id, job_id, is_read, receiver_id, message) VALUES (?, ?, ?, ?, ?)',
       [userId, widget.job['id'], 0, widget.user['id'], message],
@@ -113,11 +122,49 @@ class _UserProfilePageState extends State<UserProfilePage> {
   void initState() {
     super.initState();
     fetchApplicationStatus();
-    fetchAbilities(widget.user['id']).then((List<Map<String, dynamic>> fetchedAbilities) {
+    fetchAbilities(widget.user['id'])
+        .then((List<Map<String, dynamic>> fetchedAbilities) {
       setState(() {
         abilities = fetchedAbilities;
       });
     });
+    loadApprovalMessage();
+  }
+
+  Future<void> loadApprovalMessage() async {
+    final conn = await getConnection();
+    final results = await conn.query(
+      'SELECT approval_message FROM job_applications WHERE job_id = ? AND freelancer_id = ?',
+      [widget.job['id'], widget.user['id']],
+    );
+
+    if (results.isNotEmpty) {
+      final application = results.first.fields;
+      setState(() {
+        approvalMessage = application['approval_message'];
+      });
+    }
+
+    await conn.close();
+  }
+
+  Future<void> saveApprovalMessage(String message) async {
+    final conn = await getConnection();
+
+    try {
+      await conn.query(
+        'UPDATE job_applications SET approval_message = ? WHERE job_id = ? AND freelancer_id = ?',
+        [message, widget.job['id'], widget.user['id']],
+      );
+
+      setState(() {
+        approvalMessage = message;
+      });
+    } catch (e) {
+      print('An error occurred while saving approval message: $e');
+    } finally {
+      await conn.close();
+    }
   }
 
   @override
@@ -184,9 +231,37 @@ class _UserProfilePageState extends State<UserProfilePage> {
               ),
             ),
             SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: isApproved ? null : approveApplication,
-              child: Text(isApproved ? 'Application Approved' : 'Approve Application'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: applicationStatus == 'Approved' ||
+                          applicationStatus == 'Rejected'
+                      ? null
+                      : approveApplication,
+                  child: Text(
+                    applicationStatus == 'Approved'
+                        ? 'Application Approved'
+                        : 'Approve Application',
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: applicationStatus == 'Approved' ||
+                          applicationStatus == 'Rejected'
+                      ? null
+                      : rejectApplication,
+                  child: Text(
+                    applicationStatus == 'Rejected'
+                        ? 'Application Rejected'
+                        : 'Reject Application',
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              approvalMessage,
+              style: TextStyle(fontSize: 16.0, color: Colors.red),
             ),
           ],
         ),

@@ -212,7 +212,7 @@ class _JobScreenState extends State<JobScreen>
               SizedBox(width: 16),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           SizedBox(
             height: 130,
             child: ListView.separated(
@@ -223,7 +223,7 @@ class _JobScreenState extends State<JobScreen>
               itemBuilder: (context, index) => _categories(item: items[index]),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Row(
             children: [
               Text(
@@ -286,42 +286,51 @@ class _JobScreenState extends State<JobScreen>
 
   Widget _categories({
     required CardItem item,
-  }) =>
-      GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CategoryJobsPage(category: item.title),
-            ),
-          );
-        },
+  }) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CategoryJobsPage(category: item.title),
+          ),
+        );
+      },
+      child: Align(
+        alignment: Alignment.topCenter,
         child: Container(
           width: 150,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Image.asset(
                 item.urlImage,
                 width: 50,
                 height: 50,
               ),
-              const SizedBox(height: 5),
+              SizedBox(height: 10),
               Text(
                 item.title,
                 style: GoogleFonts.openSans(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
         ),
-      );
+      ),
+    );
+  }
+
 }
+
 
 class CardItem {
   final String urlImage;
