@@ -269,7 +269,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
     );
   }
 
-  scroll() {
+  Widget scroll() {
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
       maxChildSize: 1,
@@ -456,6 +456,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
                         itemBuilder: (context, index) {
                           return ListTile(
                             title: Text(comments[index]),
+                            subtitle: Text(comments[index]),
                           );
                         },
                       ),

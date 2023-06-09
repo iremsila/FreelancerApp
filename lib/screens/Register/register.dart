@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Login/login.dart';
 import '../onboarding_screen.dart';
@@ -22,7 +23,7 @@ class _RegisterPageState extends State<RegisterPage>
   late TextEditingController _emailController = TextEditingController();
   late TextEditingController _passwordController = TextEditingController();
   late TextEditingController _confirmpasswordController =
-  TextEditingController();
+      TextEditingController();
   late TextEditingController _nameController = TextEditingController();
   late TextEditingController _ageController = TextEditingController();
   late AnimationController _animatedController;
@@ -89,23 +90,46 @@ class _RegisterPageState extends State<RegisterPage>
     db: 'httpdegm_database1',
   );
 
-  Future<void> register() async {
-    final connect = await mysql.MySqlConnection.connect(settings);
-    await connect.query(
-        '''INSERT INTO User (nameandsurname, age, email, password, freelanceroremployer) VALUES (?, ?, ?, ?,?)''',
+  Future<bool> register() async {
+    try {
+      final connect = await mysql.MySqlConnection.connect(settings);
+      await connect.query(
+        'INSERT INTO User (nameandsurname, age, email, password, freelanceroremployer) VALUES (?, ?, ?, ?, ?)',
         [
           _nameController.text,
           int.tryParse(_ageController.text),
           _emailController.text,
           _passwordController.text,
-          _selectedOption
-        ]);
-    await connect.close();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('You have successfully registered!'),
-      ),
-    );
+          _selectedOption,
+        ],
+      );
+      final results = await connect.query(
+        'SELECT * FROM User WHERE email = ? AND password = ?',
+        [_emailController.text, hashPassword(_passwordController.text)],
+      );
+      if (results.isNotEmpty) {
+        final userRow = results.first;
+        final int userId = userRow['id'];
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('userId', userId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('You have successfully registered!'),
+          ),
+        );
+      }
+      return true; // Registration successful
+    } catch (error) {
+      print('Error occurred during registration: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('An error occurred during registration. Please try again.'),
+        ),
+      );
+      return false; // Registration failed
+    }
   }
 
   bool passwordConfirmed() {
@@ -135,16 +159,16 @@ class _RegisterPageState extends State<RegisterPage>
     _animatedController =
         AnimationController(vsync: this, duration: Duration(seconds: 50));
     _animation =
-    CurvedAnimation(parent: _animatedController, curve: Curves.linear)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((animationStatus) {
-        if (animationStatus == AnimationStatus.completed) {
-          _animatedController.reset();
-          _animatedController.forward();
-        }
-      });
+        CurvedAnimation(parent: _animatedController, curve: Curves.linear)
+          ..addListener(() {
+            setState(() {});
+          })
+          ..addStatusListener((animationStatus) {
+            if (animationStatus == AnimationStatus.completed) {
+              _animatedController.reset();
+              _animatedController.forward();
+            }
+          });
     _animatedController.forward();
     super.initState();
   }
@@ -157,7 +181,7 @@ class _RegisterPageState extends State<RegisterPage>
         children: [
           CachedNetworkImage(
             imageUrl:
-            "https://i.pinimg.com/564x/81/db/9f/81db9f703de0ec7e79919174623f3d9e.jpg",
+                "https://i.pinimg.com/564x/81/db/9f/81db9f703de0ec7e79919174623f3d9e.jpg",
             errorWidget: (context, url, error) => Icon(Icons.error),
             height: double.infinity,
             width: double.infinity,
@@ -346,10 +370,10 @@ class _RegisterPageState extends State<RegisterPage>
                         color: _strength <= 1 / 4
                             ? Colors.red
                             : _strength == 2 / 4
-                            ? Colors.yellow
-                            : _strength == 3 / 4
-                            ? Colors.blue
-                            : Colors.green,
+                                ? Colors.yellow
+                                : _strength == 3 / 4
+                                    ? Colors.blue
+                                    : Colors.green,
                         minHeight: 15,
                       ),
                     ),
@@ -398,7 +422,20 @@ class _RegisterPageState extends State<RegisterPage>
                       padding: EdgeInsets.symmetric(horizontal: 25),
                       child: GestureDetector(
                         onTap: () async {
-                          register();
+                          bool isRegistered = await register();
+                          if (isRegistered) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const MainPage()),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Incorrect email or password'),
+                              ),
+                            );
+                          }
                           // Navigator.push(
                           //   context,
                           //   MaterialPageRoute(
