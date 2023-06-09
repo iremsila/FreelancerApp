@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../provider/theme_provider.dart';
+
 import '../../../settings/settingpage.dart';
 import '../../Login/login.dart';
 
@@ -190,19 +190,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProviderData = Provider.of<ThemeProvider>(context);
-    final bool isLightTheme = themeProviderData.getTheme().brightness == Brightness.light;
+    final bool isLightTheme =
+        themeProviderData.getTheme().brightness == Brightness.light;
     final Color appBarTextColor = isLightTheme ? Colors.black : Colors.white;
-    final Color appBarBackgroundColor = themeProviderData.getTheme().scaffoldBackgroundColor;
+    final Color appBarBackgroundColor =
+        themeProviderData.getTheme().scaffoldBackgroundColor;
     final Color TextColor2 = isLightTheme ? Colors.black : Colors.white;
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        systemOverlayStyle:
+            SystemUiOverlayStyle(statusBarColor: Colors.transparent),
         backgroundColor: appBarBackgroundColor,
         title: Text(
           'Profile',
-          style: GoogleFonts.openSans(fontSize: 25, fontWeight: FontWeight.bold, color: appBarTextColor),
+          style: GoogleFonts.openSans(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: appBarTextColor),
         ),
         actions: [
           IconButton(
@@ -215,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.logout,color: TextColor2),
+            icon: Icon(Icons.logout, color: TextColor2),
             onPressed: () {
               showDialog(
                 context: context,
