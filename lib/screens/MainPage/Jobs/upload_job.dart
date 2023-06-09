@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../provider/theme_provider.dart';
 
-
 class UploadJobNow extends StatefulWidget {
   @override
   _UploadJobNow createState() => _UploadJobNow();
@@ -127,6 +126,7 @@ class _UploadJobNow extends State<UploadJobNow> {
     return Scaffold(
       backgroundColor: themeProviderData.getTheme().scaffoldBackgroundColor,
       appBar: AppBar(
+        backgroundColor: Colors.blue.shade900,
         title: Text(
           "Post a Job",
           style: TextStyle(
@@ -293,6 +293,10 @@ class _UploadJobNow extends State<UploadJobNow> {
                   ),
                   SizedBox(height: 10.0),
                   ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          Colors.blue.shade900),
+                    ),
                     onPressed: () {
                       if (_formKey.currentState!.validate() &&
                           selectedOption.isNotEmpty &&
