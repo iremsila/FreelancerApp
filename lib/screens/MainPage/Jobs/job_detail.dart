@@ -6,9 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../constans/colors.dart';
 import '../../../provider/theme_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class JobDetailPage extends StatefulWidget {
   late final Map<String, dynamic> jobData;
@@ -281,10 +279,6 @@ class _JobDetailPageState extends State<JobDetailPage> {
                 final themeProviderData = context.read<ThemeProvider>();
                 final bool isLightTheme =
                     themeProviderData.getTheme().brightness == Brightness.light;
-                final Color appBarTextColor =
-                    isLightTheme ? Colors.black : Colors.white;
-                final Color appBarBackgroundColor =
-                    isLightTheme ? Colors.black : Colors.white;
                 final Color textColor2 =
                     isLightTheme ? Colors.black : Colors.white;
 
