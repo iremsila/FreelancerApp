@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constans/colors.dart';
+import '../../../provider/theme_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class JobDetailPage extends StatefulWidget {
   late final Map<String, dynamic> jobData;
@@ -221,269 +224,308 @@ class _JobDetailPageState extends State<JobDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Scaffold(
-          body: Stack(
-            children: [
-              SizedBox(
-                width: double.infinity,
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              buttonArrow(context),
-              scroll(),
-            ],
+      body: Stack(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: Image.asset("assets/images/logo.png"),
           ),
-        ),
-      ),
-    );
-  }
-
-  buttonArrow(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: InkWell(
-        onTap: () {
-          Navigator.pop(context);
-        },
-        child: Container(
-          height: 55,
-          width: 55,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25),
-          ),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
                 height: 55,
                 width: 55,
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(25)),
-                child: Icon(
-                  Icons.arrow_back_ios,
-                  size: 20,
-                  color: Colors.white,
-                )),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget scroll() {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.6,
-      maxChildSize: 1,
-      minChildSize: 0.6,
-      builder: (context, scrollController) {
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-          ),
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 25),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 5,
-                        width: 5,
-                        color: Colors.black,
-                      )
-                    ],
-                  ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
                 ),
-                Text(
-                  widget.jobData['job_title'],
-                  style: GoogleFonts.openSans(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  widget.jobData['location'],
-                  style:
-                      GoogleFonts.openSans(fontSize: 15, color: SecondaryText),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      widget.jobData['category'],
-                      style: GoogleFonts.openSans(
-                          fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-                    Spacer(),
-                    Column(
-                      children: [
-                        Text(
-                          DateFormat('yyyy-MM-dd')
-                              .format(widget.jobData['date_posted']),
-                          style: GoogleFonts.openSans(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: Divider(
-                    height: 4,
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "Job Description",
-                    style: GoogleFonts.openSans(
-                        fontSize: 25, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    widget.jobData['description'],
-                    style: GoogleFonts.openSans(
-                        fontSize: 15, color: SecondaryText),
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  child: Divider(
-                    height: 4,
-                  ),
-                ),
-                Row(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "Budget",
-                        style: GoogleFonts.openSans(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Spacer(),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.people,
-                          size: 30,
-                        ),
-                        const SizedBox(width: 5),
-                        StreamBuilder<int>(
-                          stream: applicationCountStream,
-                          initialData: applicationCount,
-                          builder: (context, snapshot) {
-                            return Text(
-                              snapshot.data.toString(),
-                              style: GoogleFonts.openSans(
-                                  fontSize: 20, color: SecondaryText),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    '\$${widget.jobData['budget']}',
-                    style: GoogleFonts.openSans(fontSize: 15),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    applyJob(context);
-                  },
-                  child: Text(
-                    "Apply",
-                    style: GoogleFonts.openSans(
-                        fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-                  style: TextButton.styleFrom(
-                    elevation: 5,
-                    fixedSize: Size(150, 50),
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.cyan.shade900,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(color: Colors.cyan),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    height: 55,
+                    width: 55,
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(25)),
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      size: 20,
+                      color: Colors.white,
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 8,
-                ),
-                Container(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Comments',
-                        style: GoogleFonts.openSans(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: comments.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(comments[index]),
-                            subtitle: Text(comments[index]),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: commentController,
-                        decoration: InputDecoration(
-                          hintText: 'Write a comment',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          saveComment(commentController.text);
-                          commentController.clear();
-                        },
-                        child: Text('Submit'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        );
-      },
+          DraggableScrollableSheet(
+            initialChildSize: 0.6,
+            maxChildSize: 1,
+            minChildSize: 0.6,
+            builder: (context, scrollController) {
+              final themeProviderData = context.read<ThemeProvider>();
+              final bool isLightTheme =
+                  themeProviderData.getTheme().brightness == Brightness.light;
+              final Color appBarTextColor =
+                  isLightTheme ? Colors.black : Colors.white;
+              final Color appBarBackgroundColor =
+                  themeProviderData.getTheme().scaffoldBackgroundColor;
+              final Color textColor2 =
+                  isLightTheme ? Colors.black : Colors.white;
+
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  color: isLightTheme ? Colors.white : Colors.black,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20, bottom: 25),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 5,
+                              width: 5,
+                              color: Colors.black12,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        widget.jobData['job_title'],
+                        style: GoogleFonts.openSans(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: textColor2,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        widget.jobData['location'],
+                        style: GoogleFonts.openSans(
+                          fontSize: 15,
+                          color: textColor2,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        children: [
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            widget.jobData['category'],
+                            style: GoogleFonts.openSans(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: textColor2,
+                            ),
+                          ),
+                          Spacer(),
+                          Column(
+                            children: [
+                              Text(
+                                DateFormat('yyyy-MM-dd')
+                                    .format(widget.jobData['date_posted']),
+                                style: GoogleFonts.openSans(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        child: Divider(
+                          height: 4,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          "Job Description",
+                          style: GoogleFonts.openSans(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                            color: textColor2,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          widget.jobData['description'],
+                          style: GoogleFonts.openSans(
+                            fontSize: 15,
+                            color: textColor2,
+                          ),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        child: Divider(
+                          height: 4,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              "Budget",
+                              style: GoogleFonts.openSans(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: textColor2,
+                              ),
+                            ),
+                          ),
+                          Spacer(),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.people,
+                                size: 30,
+                                color: textColor2,
+                              ),
+                              const SizedBox(width: 5),
+                              StreamBuilder<int>(
+                                stream: applicationCountStream,
+                                initialData: applicationCount,
+                                builder: (context, snapshot) {
+                                  return Text(
+                                    snapshot.data.toString(),
+                                    style: GoogleFonts.openSans(
+                                      fontSize: 20,
+                                      color: textColor2,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          '\$${widget.jobData['budget']}',
+                          style: GoogleFonts.openSans(
+                            fontSize: 15,
+                            color: textColor2,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          applyJob(context);
+                        },
+                        child: Text(
+                          "Apply",
+                          style: GoogleFonts.openSans(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: textColor2,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          elevation: 5,
+                          fixedSize: Size(150, 50),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(color: Colors.cyan),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Comments',
+                              style: GoogleFonts.openSans(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: textColor2,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: comments.length,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  title: Text(
+                                    comments[index],
+                                    style: TextStyle(color: textColor2),
+                                  ),
+                                  subtitle: Text(
+                                    comments[index],
+                                    style: TextStyle(color: textColor2),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            TextField(
+                              controller: commentController,
+                              style: TextStyle(color: textColor2),
+                              decoration: InputDecoration(
+                                hintText: 'Write a comment',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                saveComment(commentController.text);
+                                commentController.clear();
+                              },
+                              child: Text(
+                                'Submit',
+                                style: TextStyle(color: textColor2),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
