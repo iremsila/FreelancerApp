@@ -34,7 +34,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
 
   TextEditingController commentController =
       TextEditingController(); // Yorum girilen metni tutacak controller
-  List<String> comments = []; // Yorumların tutulduğu liste
+  List<Comment> comments = []; // Yorumların tutulduğu liste
 
   @override
   void initState() {
@@ -48,13 +48,18 @@ class _JobDetailPageState extends State<JobDetailPage> {
 
     try {
       final results = await conn.query(
-        'SELECT comment FROM job_comments WHERE job_id = ?',
+        'SELECT c.comment, u.nameandsurname FROM job_comments c INNER JOIN User u ON c.user_id = u.id WHERE c.job_id = ?',
         [widget.jobData['id']],
       );
 
-      List<String> fetchedComments = [];
+      List<Comment> fetchedComments = [];
       for (var row in results) {
-        fetchedComments.add(row['comment']);
+        fetchedComments.add(
+          Comment(
+            comment: row['comment'],
+            userName: row['nameandsurname'],
+          ),
+        );
       }
 
       setState(() {
@@ -68,16 +73,23 @@ class _JobDetailPageState extends State<JobDetailPage> {
   }
 
   Future<void> saveComment(String comment) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt('userId') ?? 0;
     final conn = await getConnection();
 
     try {
       await conn.query(
         'INSERT INTO job_comments (job_id, user_id, comment) VALUES (?, ?, ?)',
-        [widget.jobData['id'], widget.jobData['user_id'], comment],
+        [widget.jobData['id'], userId, comment],
       );
 
       setState(() {
-        comments.add(comment);
+        comments.add(
+          Comment(
+            comment: comment,
+            userName: widget.jobData['nameandsurname'],
+          ),
+        );
       });
     } catch (e) {
       print('An error occurred while saving comment: $e');
@@ -223,318 +235,330 @@ class _JobDetailPageState extends State<JobDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: Image.asset("assets/images/logo.png"),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Container(
-                height: 55,
-                width: 55,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(
-                    height: 55,
-                    width: 55,
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(25)),
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      size: 20,
-                      color: Colors.white,
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              child: Image.asset("assets/images/logo.png"),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  height: 55,
+                  width: 55,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      height: 55,
+                      width: 55,
+                      decoration:
+                          BoxDecoration(borderRadius: BorderRadius.circular(25)),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        size: 20,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          DraggableScrollableSheet(
-            initialChildSize: 0.6,
-            maxChildSize: 1,
-            minChildSize: 0.6,
-            builder: (context, scrollController) {
-              final themeProviderData = context.read<ThemeProvider>();
-              final bool isLightTheme =
-                  themeProviderData.getTheme().brightness == Brightness.light;
-              final Color appBarTextColor =
-                  isLightTheme ? Colors.black : Colors.white;
-              final Color appBarBackgroundColor =
-                  isLightTheme ? Colors.black : Colors.white;
-              final Color textColor2 =
-                  isLightTheme ? Colors.black : Colors.white;
+            DraggableScrollableSheet(
+              initialChildSize: 0.6,
+              maxChildSize: 1,
+              minChildSize: 0.6,
+              builder: (context, scrollController) {
+                final themeProviderData = context.read<ThemeProvider>();
+                final bool isLightTheme =
+                    themeProviderData.getTheme().brightness == Brightness.light;
+                final Color appBarTextColor =
+                    isLightTheme ? Colors.black : Colors.white;
+                final Color appBarBackgroundColor =
+                    isLightTheme ? Colors.black : Colors.white;
+                final Color textColor2 =
+                    isLightTheme ? Colors.black : Colors.white;
 
-              return Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(
-                  color: isLightTheme ? Colors.white : Colors.black,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    color: isLightTheme ? Colors.white : Colors.black,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
                   ),
-                ),
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20, bottom: 25),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20, bottom: 25),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 5,
+                                width: 5,
+                                color: Colors.black12,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          widget.jobData['job_title'],
+                          style: GoogleFonts.openSans(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: textColor2,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          widget.jobData['location'],
+                          style: GoogleFonts.openSans(
+                            fontSize: 15,
+                            color: textColor2,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Row(
                           children: [
-                            Container(
-                              height: 5,
+                            const SizedBox(
                               width: 5,
-                              color: Colors.black12,
+                            ),
+                            Text(
+                              widget.jobData['category'],
+                              style: GoogleFonts.openSans(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: textColor2,
+                              ),
+                            ),
+                            Spacer(),
+                            Column(
+                              children: [
+                                Text(
+                                  DateFormat('yyyy-MM-dd')
+                                      .format(widget.jobData['date_posted']),
+                                  style: GoogleFonts.openSans(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor2,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ),
-                      Text(
-                        widget.jobData['job_title'],
-                        style: GoogleFonts.openSans(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: textColor2,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        widget.jobData['location'],
-                        style: GoogleFonts.openSans(
-                          fontSize: 15,
-                          color: textColor2,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        children: [
-                          const SizedBox(
-                            width: 5,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: Divider(
+                            height: 4,
                           ),
-                          Text(
-                            widget.jobData['category'],
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Job Description",
+                            style: GoogleFonts.openSans(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: textColor2,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            widget.jobData['description'],
+                            style: GoogleFonts.openSans(
+                              fontSize: 15,
+                              color: textColor2,
+                            ),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          child: Divider(
+                            height: 4,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                "Budget",
+                                style: GoogleFonts.openSans(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor2,
+                                ),
+                              ),
+                            ),
+                            Spacer(),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.people,
+                                  size: 30,
+                                  color: textColor2,
+                                ),
+                                const SizedBox(width: 5),
+                                StreamBuilder<int>(
+                                  stream: applicationCountStream,
+                                  initialData: applicationCount,
+                                  builder: (context, snapshot) {
+                                    return Text(
+                                      snapshot.data.toString(),
+                                      style: GoogleFonts.openSans(
+                                        fontSize: 20,
+                                        color: textColor2,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            '\$${widget.jobData['budget']}',
+                            style: GoogleFonts.openSans(
+                              fontSize: 15,
+                              color: textColor2,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            applyJob(context);
+                          },
+                          child: Text(
+                            "Apply",
                             style: GoogleFonts.openSans(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                               color: textColor2,
                             ),
                           ),
-                          Spacer(),
-                          Column(
+                          style: TextButton.styleFrom(
+                            elevation: 5,
+                            fixedSize: Size(150, 50),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(color: Colors.cyan),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                DateFormat('yyyy-MM-dd')
-                                    .format(widget.jobData['date_posted']),
+                                'Comments',
                                 style: GoogleFonts.openSans(
-                                  fontSize: 15,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: textColor2,
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        child: Divider(
-                          height: 4,
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          "Job Description",
-                          style: GoogleFonts.openSans(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: textColor2,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          widget.jobData['description'],
-                          style: GoogleFonts.openSans(
-                            fontSize: 15,
-                            color: textColor2,
-                          ),
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        child: Divider(
-                          height: 4,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              "Budget",
-                              style: GoogleFonts.openSans(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: textColor2,
-                              ),
-                            ),
-                          ),
-                          Spacer(),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.people,
-                                size: 30,
-                                color: textColor2,
-                              ),
-                              const SizedBox(width: 5),
-                              StreamBuilder<int>(
-                                stream: applicationCountStream,
-                                initialData: applicationCount,
-                                builder: (context, snapshot) {
-                                  return Text(
-                                    snapshot.data.toString(),
-                                    style: GoogleFonts.openSans(
-                                      fontSize: 20,
-                                      color: textColor2,
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: comments.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: Text(
+                                      comments[index].comment,
+                                      style: TextStyle(
+                                          color: textColor2,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Text(
+                                      comments[index].userName,
+                                      style: TextStyle(color: textColor2),
                                     ),
                                   );
                                 },
                               ),
+                              TextField(
+                                controller: commentController,
+                                style: TextStyle(color: textColor2),
+                                decoration: InputDecoration(
+                                  hintText: 'Write a comment',
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors
+                                            .black), // Border rengini siyah yapar
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color:
+                                            Colors.black), // Focused border rengi
+                                  ),
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      saveComment(commentController.text);
+                                      commentController.clear();
+                                    },
+                                    icon: Icon(
+                                      Icons.send,
+                                      color: textColor2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
                             ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          '\$${widget.jobData['budget']}',
-                          style: GoogleFonts.openSans(
-                            fontSize: 15,
-                            color: textColor2,
-                          ),
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          applyJob(context);
-                        },
-                        child: Text(
-                          "Apply",
-                          style: GoogleFonts.openSans(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: textColor2,
-                          ),
-                        ),
-                        style: TextButton.styleFrom(
-                          elevation: 5,
-                          fixedSize: Size(150, 50),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(color: Colors.cyan),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Comments',
-                              style: GoogleFonts.openSans(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: textColor2,
-                              ),
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: comments.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(
-                                    comments[index],
-                                    style: TextStyle(
-                                        color: textColor2,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  subtitle: Text(
-                                    comments[index],
-                                    style: TextStyle(color: textColor2),
-                                  ),
-                                );
-                              },
-                            ),
-                            TextField(
-                              controller: commentController,
-                              style: TextStyle(color: textColor2),
-                              decoration: InputDecoration(
-                                hintText: 'Write a comment',
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors
-                                          .black), // Border rengini siyah yapar
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color:
-                                          Colors.black), // Focused border rengi
-                                ),
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    saveComment(commentController.text);
-                                    commentController.clear();
-                                  },
-                                  icon: Icon(
-                                    Icons.send,
-                                    color: textColor2,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-        ],
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
+}
+
+class Comment {
+  final String comment;
+  final String userName;
+
+  Comment({
+    required this.comment,
+    required this.userName,
+  });
 }
