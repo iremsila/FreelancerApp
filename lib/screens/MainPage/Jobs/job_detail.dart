@@ -84,7 +84,8 @@ class _JobDetailPageState extends State<JobDetailPage> {
       );
 
       setState(() {
-        comments.add(
+        comments.insert(
+          0,
           Comment(
             comment: comment,
             userName: widget.jobData['nameandsurname'],
@@ -482,15 +483,22 @@ class _JobDetailPageState extends State<JobDetailPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Comments',
-                                style: GoogleFonts.openSans(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor2,
-                                ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Comments',
+                                    style: GoogleFonts.openSans(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: textColor2,
+                                    ),
+                                  ),
+                                ],
                               ),
                               ListView.builder(
+                                reverse: true,
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
                                 itemCount: comments.length,
@@ -528,6 +536,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
                                     onPressed: () {
                                       saveComment(commentController.text);
                                       commentController.clear();
+                                      fetchComments();
                                     },
                                     icon: Icon(
                                       Icons.send,
