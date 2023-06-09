@@ -53,9 +53,7 @@ dependencies:
   mailer: ^6.0.1
   flutter_svg: ^0.22.0
   smooth_page_indicator: ^1.1.0
-  flutter_riverpod: ^1.0.3
-
-
+  flutter_riverpod: ^2.3.6
 
 dev_dependencies:
   flutter_test:
