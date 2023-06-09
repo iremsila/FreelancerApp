@@ -6,6 +6,7 @@ class CategoriesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue.shade900,
         title: Text('Categories'),
       ),
       body: ListView(

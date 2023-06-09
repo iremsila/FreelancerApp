@@ -45,20 +45,27 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProviderData = Provider.of<ThemeProvider>(context);
-    final bool isLightTheme = themeProviderData.getTheme().brightness == Brightness.light;
+    final bool isLightTheme =
+        themeProviderData.getTheme().brightness == Brightness.light;
     final Color appBarTextColor = isLightTheme ? Colors.black : Colors.white;
-    final Color appBarBackgroundColor = themeProviderData.getTheme().scaffoldBackgroundColor;
-    final Color backgroundColor = isLightTheme ? Colors.white : Colors.black;
+    final Color appBarBackgroundColor =
+        themeProviderData.getTheme().scaffoldBackgroundColor;
+    final Color backgroundColor =
+        isLightTheme ? Colors.white : Color(0xFF303030);
     final Color foregroundColor = isLightTheme ? Colors.black : Colors.white;
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        systemOverlayStyle:
+            SystemUiOverlayStyle(statusBarColor: Colors.transparent),
         backgroundColor: appBarBackgroundColor,
         title: Text(
           'Discover & Search',
-          style: GoogleFonts.openSans(fontSize: 25, fontWeight: FontWeight.bold, color: appBarTextColor),
+          style: GoogleFonts.openSans(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: appBarTextColor),
         ),
         elevation: 2,
       ),

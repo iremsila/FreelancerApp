@@ -207,7 +207,7 @@ class _SettingPageUIState extends State<SettingPageUI> {
       theme: theme.getTheme(),
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.cyan,
+          backgroundColor: Colors.blue.shade900,
           title: Text("Settings", style: TextStyle(fontSize: 22)),
           leading: IconButton(
             onPressed: () {

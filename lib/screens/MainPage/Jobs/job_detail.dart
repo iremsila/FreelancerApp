@@ -260,8 +260,8 @@ class _JobDetailPageState extends State<JobDetailPage> {
                     child: Container(
                       height: 55,
                       width: 55,
-                      decoration:
-                          BoxDecoration(borderRadius: BorderRadius.circular(25)),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25)),
                       child: Icon(
                         Icons.arrow_back_ios,
                         size: 20,
@@ -291,7 +291,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   clipBehavior: Clip.hardEdge,
                   decoration: BoxDecoration(
-                    color: isLightTheme ? Colors.white : Colors.black,
+                    color: isLightTheme ? Colors.white : Color(0xFF303030),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
@@ -497,13 +497,13 @@ class _JobDetailPageState extends State<JobDetailPage> {
                                 itemBuilder: (context, index) {
                                   return ListTile(
                                     title: Text(
-                                      comments[index].comment,
+                                      comments[index].userName,
                                       style: TextStyle(
                                           color: textColor2,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     subtitle: Text(
-                                      comments[index].userName,
+                                      comments[index].comment,
                                       style: TextStyle(color: textColor2),
                                     ),
                                   );
@@ -521,8 +521,8 @@ class _JobDetailPageState extends State<JobDetailPage> {
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                        color:
-                                            Colors.black), // Focused border rengi
+                                        color: Colors
+                                            .black), // Focused border rengi
                                   ),
                                   suffixIcon: IconButton(
                                     onPressed: () {

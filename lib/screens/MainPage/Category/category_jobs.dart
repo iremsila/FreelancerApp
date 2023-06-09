@@ -54,6 +54,7 @@ class _CategoryJobsPageState extends State<CategoryJobsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue.shade900,
         title: Text(widget.category),
       ),
       body: ListView.builder(
