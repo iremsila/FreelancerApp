@@ -264,17 +264,21 @@ class _LoginPageState extends State<LoginPage>
                             }
                           },
                           child: Container(
+                            width: 300,
+                            height: 45,
                             padding: EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.blue.shade800,
+                              color: Colors.blue.shade900,
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Text(
-                              'Sign In',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24,
-                                color: Colors.white,
+                            child: Center(
+                              child: Text(
+                                'Sign In',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),

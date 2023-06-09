@@ -470,7 +470,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(color: Colors.cyan),
+                              side: BorderSide(color: Colors.blue.shade900),
                             ),
                           ),
                         ),

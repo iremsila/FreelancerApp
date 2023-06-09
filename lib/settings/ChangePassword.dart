@@ -20,11 +20,10 @@ class MyApp extends StatelessWidget {
 
 class PasswordChangePage extends StatelessWidget {
   final TextEditingController _currentPasswordController =
-  TextEditingController();
-  final TextEditingController _newPasswordController =
-  TextEditingController();
+      TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
 
   bool isPasswordValid(String password) {
     // Şifre geçerlilik kurallarını burada kontrol edin
@@ -94,8 +93,8 @@ class PasswordChangePage extends StatelessWidget {
       final conn = await mysql.MySqlConnection.connect(settings);
 
       // Mevcut şifreyi kontrol et
-      final result = await conn.query(
-          'SELECT * FROM User WHERE password = ?', [currentPassword]);
+      final result = await conn
+          .query('SELECT * FROM User WHERE password = ?', [currentPassword]);
 
       if (result.isNotEmpty) {
         // Şifre doğru, şifreyi güncelle
@@ -154,11 +153,12 @@ class PasswordChangePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProviderData =
-    Provider.of<ThemeProvider>(context, listen: false);
+        Provider.of<ThemeProvider>(context, listen: false);
 
     return Scaffold(
       backgroundColor: themeProviderData.getTheme().scaffoldBackgroundColor,
       appBar: AppBar(
+        backgroundColor: Colors.blue.shade900,
         title: Text('Change Password'),
       ),
       body: Padding(
@@ -215,11 +215,15 @@ class PasswordChangePage extends StatelessWidget {
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(Colors.blue.shade900),
+              ),
               onPressed: () {
                 changePassword(context);
               },
               child: Text('Change password'),
-            ),
+            )
           ],
         ),
       ),

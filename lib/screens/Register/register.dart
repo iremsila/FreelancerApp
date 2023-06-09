@@ -447,17 +447,21 @@ class _RegisterPageState extends State<RegisterPage>
                           // );
                         },
                         child: Container(
+                          width: 300,
+                          height: 45,
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: Colors.blue.shade900,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Text(
-                            'Sign Up',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
-                              color: Colors.white,
+                          child: Center(
+                            child: Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
