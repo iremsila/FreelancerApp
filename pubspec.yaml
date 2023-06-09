@@ -84,6 +84,7 @@ flutter:
     - assets/images/welcome1.jpg
     - assets/images/welcome5.jpg
     - assets/images/welcome6.jpg
+    - assets/images/
     - assets/animation.json
 
   # An image asset can refer to one or more resolution-specific "variants", see

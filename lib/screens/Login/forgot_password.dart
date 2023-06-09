@@ -50,10 +50,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     ),
                   ),
                   SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: _sendResetEmail,
-                    child: Text('Send Reset Email'),
-                  ),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: _sendResetEmail,
+                      child: Text('Send Reset Email'),
+                    ),
+                  )
                 ],
               )
             : Column(
